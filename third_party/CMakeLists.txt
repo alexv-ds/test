@@ -1,0 +1,4 @@
+add_subdirectory(sokol SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(entt SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(boost SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(spdlog SYSTEM EXCLUDE_FROM_ALL)

@@ -9,12 +9,12 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall -Wextra -pedantic)
+add_compile_options(-Wall -Wextra -pedantic -Wno-language-extension-token)
 
 include(cmake/CPM.cmake)
 
-add_subdirectory(src/sokol SYSTEM EXCLUDE_FROM_ALL)
-add_subdirectory(src/entt SYSTEM EXCLUDE_FROM_ALL)
-add_subdirectory(src/boost SYSTEM EXCLUDE_FROM_ALL)
+add_subdirectory(third_party)
+add_subdirectory(src/engine)
+add_subdirectory(src/engine-main)
 add_subdirectory(src/main)
 add_subdirectory(src/wip)

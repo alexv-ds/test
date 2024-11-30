@@ -1,9 +1,10 @@
-add_executable(main main.cpp
-  ../core/ServiceRegistry.cpp
-  ../core/ServiceRegistry.hpp)
+add_executable(main WIN32
+  main.cpp
+)
 
 target_link_libraries(main PRIVATE
   third_party::entt
   third_party::sokol
+  engine
   Boost::core
 )
