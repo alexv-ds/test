@@ -6,5 +6,4 @@ target_link_libraries(main PRIVATE
   third_party::entt
   third_party::sokol
   engine
-  Boost::core
 )

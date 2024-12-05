@@ -4,7 +4,7 @@
 #include <entt/core/type_info.hpp>
 #include <type_traits>
 
-namespace core
+namespace engine
 {
   class ServiceRegistry
   {
@@ -49,10 +49,9 @@ namespace core
   template <class Interface, class Impl>
   void ServiceRegistry::add_service(const std::shared_ptr<Impl> &service)
   {
+    static_assert(std::is_base_of_v<Interface, Impl>, "Interface is not base of implementation");
 #ifdef __cpp_lib_is_virtual_base_of
-    static_assert(std::is_virtual_base_of_v<Interface, Impl>, "Implementation is not subtype of interface");
-#else
-    static_assert(std::is_base_of_v<Interface, Impl>, "Implementation is not subtype of interface");
+    static_assert(std::is_virtual_base_of_v<Interface, Impl>, "Interface is not virtual base of implementation");
 #endif
     std::shared_ptr<void> void_service = std::reinterpret_pointer_cast<void>(service);
     add_service(entt::type_id<Interface>(), std::move(void_service));

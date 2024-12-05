@@ -6,7 +6,7 @@
 #include <format>
 #include <stdexcept>
 
-namespace core
+namespace engine
 {
   void ServiceRegistry::add_service(const entt::type_info &interface, std::shared_ptr<void> &&service)
   {
