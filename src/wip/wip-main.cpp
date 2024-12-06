@@ -136,23 +136,79 @@
 //   sg_commit();
 // }
 
+#include <utility>
 #include <engine/Engine.hpp>
 #include <engine/log.hpp>
+#include <yaml-cpp/yaml.h>
+
+class LambdaSystem final : public engine::System
+{
+public:
+  static std::shared_ptr<System> create(std::function<void(entt::registry &reg)> func)
+  {
+    return std::make_shared<LambdaSystem>(std::move(func));
+  }
+
+  explicit LambdaSystem(std::function<void(entt::registry &)> &&func):
+    func_(std::move(func))
+  {
+  }
+
+  void update() override
+  {
+    this->func_(registry());
+  }
+
+private:
+  std::function<void(entt::registry &)> func_;
+};
 
 
-
-void print(const char* msg, engine::Engine&)
+void print(const char *msg, engine::Engine &)
 {
   ENGINE_DEBUG(msg);
 }
 
-void engine_main(engine::Engine& engine)
+void init_systems(engine::Engine &);
+
+
+void engine_main(engine::Engine &engine)
 {
-  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::init_post, std::bind_front(print, "init_post"));
+  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::init_post,
+                                         std::bind_front(print, "init_post"));
   // engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::frame_pre, std::bind_front(print, "frame_pre"));
   // engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::frame_post, std::bind_front(print, "frame_post"));
-  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::system_run_pre, std::bind_front(print, "system_run_pre"));
+  // engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::system_run_pre, std::bind_front(print, "system_run_pre"));
   // engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::system_run_post, std::bind_front(print, "system_run_post"));
-  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::exit_pre, std::bind_front(print, "exit_pre"));
-  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::exit_post, std::bind_front(print, "exit_post"));
+  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::exit_pre,
+                                         std::bind_front(print, "exit_pre"));
+  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::exit_post,
+                                         std::bind_front(print, "exit_post"));
+
+
+  engine.lifecycle().add_callback_static(engine::service::EngineLifecycle::Stage::init_post, init_systems);
+}
+
+
+void init_systems(engine::Engine &engine)
+{
+  // engine.scheduler().add_system(LambdaSystem::create([](entt::registry &registry)
+  // {
+  //   ENGINE_INFO("HELLO FROM SYSTEM");
+  // }));
+
+  YAML::Node doc = YAML::LoadFile("config/systems.yml");
+
+  auto groups = doc["groups"];
+
+  auto (auto& pair : groups) {
+  }
+  ENGINE_INFO("OMEGAGIGA");
+
+  auto type = groups.Type();
+
+
+  auto keks = 123;
+
+
 }

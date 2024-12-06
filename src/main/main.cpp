@@ -105,8 +105,6 @@ void frame()
     sgp_draw_filled_rect(quad.x - half_size , quad.y - half_size, size, size);
   }
 
-
-
   // Begin a render pass.
   sg_pass pass = {};
   pass.swapchain = sglue_swapchain();
