@@ -1,5 +1,11 @@
 groups:
+  engine_map:
+    - engine_map_update
+    - engine_map_garbage_collect
   test:
+    - helloworlder
+    - helloworlder2
 
 order:
+  - group.engine_map
   - group.test

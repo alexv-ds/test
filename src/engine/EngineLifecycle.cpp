@@ -2,10 +2,11 @@
 #include <stdexcept>
 #include <format>
 #include "EngineLifecycle.hpp"
-#include "../log.hpp"
+#include "log.hpp"
+#include "engine/ServiceRegistry.hpp"
 
 
-namespace engine::service
+namespace engine
 {
   void EngineLifecycle::add_callback_static(Stage stage, callback cb)
   {
@@ -19,7 +20,7 @@ namespace engine::service
     this->callbacks[index].push_back(std::move(cb));
   }
 
-  void EngineLifecycle::emit(Engine &engine, Stage stage)
+  void EngineLifecycle::emit(ServiceRegistry& registry, Stage stage)
   {
     using stage_underlying_t = std::underlying_type_t<Stage>;
     static_assert(std::is_same_v<std::size_t, stage_underlying_t>);
@@ -34,11 +35,11 @@ namespace engine::service
     {
       try
       {
-        cb(engine);
+        cb(registry);
       }
       catch (std::exception &e)
       {
-        ENGINE_ERROR("Exception thrown in EngineLifecycle::emit (Stage - {}): {}", index, e.what());
+        LOG_ERROR("Exception thrown in EngineLifecycle::emit (Stage - {}): {}", index, e.what());
       }
     }
   }

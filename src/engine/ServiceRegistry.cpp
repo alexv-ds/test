@@ -15,6 +15,7 @@ namespace engine
       throw std::runtime_error(std::format("Service '{}' already registered", interface.name()));
     }
     services.emplace(interface, std::move(service));
+    LOG_TRACE("Added service - {}", interface.name());
   }
 
   std::shared_ptr<void> ServiceRegistry::get_service(const entt::type_info &interface)

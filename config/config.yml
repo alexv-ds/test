@@ -1,0 +1,5 @@
+
+
+engine:
+  map:
+    garbage_collect_interval: 1min

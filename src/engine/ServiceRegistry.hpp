@@ -3,6 +3,7 @@
 #include <map>
 #include <entt/core/type_info.hpp>
 #include <type_traits>
+#include "log.hpp"
 
 namespace engine
 {
@@ -10,7 +11,7 @@ namespace engine
   {
   public:
     template <class Interface>
-    std::shared_ptr<Interface> get_service() const;
+    std::shared_ptr<Interface> get_service();
 
     template <class Interface>
     void add_service(const std::shared_ptr<Interface> &service);
@@ -34,7 +35,7 @@ namespace engine
   // //////////////////////////// //
 
   template <class Interface>
-  std::shared_ptr<Interface> ServiceRegistry::get_service() const
+  std::shared_ptr<Interface> ServiceRegistry::get_service()
   {
     return std::reinterpret_pointer_cast<Interface>(get_service(entt::type_id<Interface>()));
   }

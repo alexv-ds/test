@@ -6,12 +6,16 @@ add_library(engine
   Engine.cpp
   Engine.hpp
   log.hpp
-  service/EngineLifecycle.cpp
-  service/EngineLifecycle.hpp
+  EngineLifecycle.cpp
+  EngineLifecycle.hpp
   SystemScheduler.cpp
   SystemScheduler.hpp
   System.hpp
   System.cpp
+  WorldMapInstanceImpl.cpp
+  WorldMapInstanceImpl.hpp
+  EventEmitter.cpp
+  EventEmitter.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

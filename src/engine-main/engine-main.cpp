@@ -4,7 +4,7 @@
 #include <engine/log.hpp>
 
 
-void engine_main(engine::Engine &engine);
+void engine_main(engine::ServiceRegistry&);
 
 std::unique_ptr<engine::Engine> g_engine;
 
@@ -14,13 +14,30 @@ void init()
   spdlog::set_level(static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
 #endif
   spdlog::cfg::load_env_levels();
-  g_engine->lifecycle().emit(*g_engine, engine::service::EngineLifecycle::Stage::init_post);
+
+  try
+  {
+    g_engine = std::make_unique<engine::Engine>();
+    engine_main(*g_engine->service_registry);
+  }
+  catch (const std::exception &e)
+  {
+    LOG_CRITICAL("Exception: {}", e.what());
+    std::rethrow_exception(std::current_exception());
+  }
+
+  g_engine->lifecycle().emit(*g_engine->service_registry, engine::EngineLifecycle::Stage::init_pre);
+  g_engine->lifecycle().emit(*g_engine->service_registry, engine::EngineLifecycle::Stage::init_post);
 }
 
 void cleanup()
 {
-  g_engine->lifecycle().emit(*g_engine, engine::service::EngineLifecycle::Stage::exit_pre);
-  g_engine->lifecycle().emit(*g_engine, engine::service::EngineLifecycle::Stage::exit_post);
+  if (g_engine)
+  {
+    g_engine->lifecycle().emit(*g_engine->service_registry, engine::EngineLifecycle::Stage::exit_pre);
+    g_engine->lifecycle().emit(*g_engine->service_registry, engine::EngineLifecycle::Stage::exit_post);
+  }
+  g_engine = nullptr;
 }
 
 void frame()
@@ -30,10 +47,6 @@ void frame()
 
 sapp_desc sokol_main(int, char **)
 {
-  g_engine = std::make_unique<engine::Engine>();
-  engine_main(*g_engine);
-  g_engine->lifecycle().emit(*g_engine, engine::service::EngineLifecycle::Stage::init_pre);
-
   sapp_desc desc = {};
   desc.init_cb = init;
   desc.frame_cb = frame;

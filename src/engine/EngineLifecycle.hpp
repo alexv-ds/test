@@ -2,18 +2,14 @@
 #include <functional>
 #include <array>
 #include <vector>
+#include "ServiceRegistry.hpp"
 
 namespace engine
-{
-  class Engine;
-}
-
-namespace engine::service
 {
   class EngineLifecycle
   {
   public:
-    using callback = std::function<void(Engine &)>;
+    using callback = std::function<void(ServiceRegistry &)>;
 
     enum class Stage : std::size_t
     {
@@ -28,7 +24,7 @@ namespace engine::service
     };
 
     void add_callback_static(Stage stage, callback cb);
-    void emit(Engine &engine, Stage stage);
+    void emit(ServiceRegistry &registry, Stage stage);
 
   private:
     std::array<std::vector<callback>, 8> callbacks;

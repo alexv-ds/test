@@ -1,7 +1,7 @@
 #pragma once
 #include <entt/entity/registry.hpp>
 #include "ServiceRegistry.hpp"
-#include "service/EngineLifecycle.hpp"
+#include "EngineLifecycle.hpp"
 #include "SystemScheduler.hpp"
 
 namespace engine
@@ -11,7 +11,7 @@ namespace engine
   public:
     Engine();
 
-    [[nodiscard]] service::EngineLifecycle &lifecycle() const
+    [[nodiscard]] EngineLifecycle &lifecycle() const
     {
       return *engine_lifecycle;
     }
@@ -21,12 +21,13 @@ namespace engine
     }
 
 
+
     void run();
 
-  private:
+  public:
     std::shared_ptr<entt::registry> ecs_registry;
     std::shared_ptr<ServiceRegistry> service_registry;
-    std::shared_ptr<service::EngineLifecycle> engine_lifecycle;
+    std::shared_ptr<EngineLifecycle> engine_lifecycle;
     std::shared_ptr<SystemScheduler> system_scheduler;
   };
 }
