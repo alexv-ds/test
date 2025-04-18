@@ -12,8 +12,6 @@ add_library(engine
   SystemScheduler.hpp
   System.hpp
   System.cpp
-  WorldMapInstanceImpl.cpp
-  WorldMapInstanceImpl.hpp
   EventEmitter.cpp
   EventEmitter.hpp
   components/world.hpp
@@ -29,4 +27,5 @@ add_library(engine
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_link_libraries(engine PUBLIC third_party::entt third_party::spdlog third_party::yaml-cpp)
+target_link_libraries(engine PRIVATE loose_quadtree::loose_quadtree)
 target_compile_definitions(engine PUBLIC SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
