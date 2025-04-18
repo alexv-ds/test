@@ -1,6 +1,6 @@
+#include "UpdateBBox.hpp"
 #include "../components/world.hpp"
 #include "../log.hpp"
-#include "UpdateBBox.hpp"
 
 namespace engine::systems {
   using Rectangle = components::world::Rectangle;
@@ -27,21 +27,23 @@ namespace engine::systems {
     reg.on_construct<Rectangle>().disconnect<&UpdateBBox::mark_for_update>(*this);
     reg.on_update<Rectangle>().disconnect<&UpdateBBox::mark_for_update>(*this);
     reg.on_destroy<Rectangle>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    this->dirty_entities.clear();
+    this->on_update_entities.clear();
   }
 
   void UpdateBBox::update() {
     auto& reg = this->registry();
-    std::swap(this->dirty_entities, this->on_update_queue);
-    for (const entt::entity e : this->on_update_queue) {
+    std::swap(this->dirty_entities, this->on_update_entities);
+    for (const entt::entity e : this->on_update_entities) {
       update_bbox(reg, e);
     }
-    on_update_queue.clear();
-    std::swap(this->dirty_entities, this->on_update_queue);
-    if (!on_update_queue.empty()) {
+    on_update_entities.clear();
+    std::swap(this->dirty_entities, this->on_update_entities);
+    if (!on_update_entities.empty()) {
       LOG_WARN("During the BoundingBox update, {} entities were added to the update "
                "queue. They will not be updated.",
-               on_update_queue.size());
-      on_update_queue.clear();
+               on_update_entities.size());
+      on_update_entities.clear();
     }
   }
 
