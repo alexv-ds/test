@@ -9,6 +9,7 @@ namespace engine {
   class SystemScheduler {
   public:
     explicit SystemScheduler(const std::filesystem::path &config_path, std::shared_ptr<entt::registry> ecs_registry);
+    ~SystemScheduler();
 
     void add_system(std::string_view name, std::shared_ptr<System> system);
     void add_system(std::string_view name, std::function<void(entt::registry &)> system);
