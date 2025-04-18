@@ -23,8 +23,8 @@ add_library(engine
   noncopyable.hpp
   MapImpl.cpp
   MapImpl.hpp
-  systems/MapSystems.hpp
-  systems/MapSystems.cpp
+  systems/UpdateBBox.hpp
+  systems/UpdateBBox.cpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

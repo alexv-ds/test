@@ -1,6 +1,6 @@
-#include "MapSystems.hpp"
 #include "../components/world.hpp"
 #include "../log.hpp"
+#include "UpdateBBox.hpp"
 
 namespace engine::systems {
   using Rectangle = components::world::Rectangle;
@@ -57,6 +57,7 @@ namespace engine::systems {
     if (!rect) {
       return;
     }
+    // TODO: добавить Rotation и Scale
 
     BoundingBox bbox = {
       .width = rect->width,

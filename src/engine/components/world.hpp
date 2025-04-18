@@ -1,4 +1,6 @@
 #pragma once
+#include <cstdint>
+
 namespace engine::components::world {
 
   struct Instance {
