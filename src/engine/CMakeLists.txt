@@ -16,6 +16,15 @@ add_library(engine
   WorldMapInstanceImpl.hpp
   EventEmitter.cpp
   EventEmitter.hpp
+  components/world.hpp
+  components/graphics.hpp
+  Map.cpp
+  Map.hpp
+  noncopyable.hpp
+  MapImpl.cpp
+  MapImpl.hpp
+  systems/MapSystems.hpp
+  systems/MapSystems.cpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

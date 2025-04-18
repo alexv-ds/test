@@ -1,5 +1,5 @@
 #include "EventEmitter.hpp"
 
 namespace engine {
-  EventEmitter::~EventEmitter() = default;
+  // EventEmitter::~EventEmitter() = default;
 } // namespace engine

@@ -1,171 +1,55 @@
-// #include <sokol_app.h>
-// #include <sokol_gfx.h>
-// #include <sokol_gp.h>
-// #include <sokol_glue.h>
-// #include <entt/entt.hpp>
-// #include <print>
-//
-// void init();
-// void frame();
-// void cleanup();
-//
-// sapp_desc sokol_main(int, char **)
-// {
-//   sapp_desc desc = {};
-//   desc.init_cb = init;
-//   desc.frame_cb = frame;
-//   desc.cleanup_cb = cleanup;
-//   desc.window_title = "Test";
-//   desc.high_dpi = true;
-//   desc.win32_console_utf8 = true;
-//   desc.win32_console_create = false;
-//   desc.win32_console_attach = true;
-//   desc.icon.sokol_default = true;
-//   return desc;
-// }
-//
-// // ///////////////////////////////////////////////////////////
-//
-// struct Position
-// {
-//   float x = 0;
-//   float y = 0;
-// };
-//
-// struct Quad
-// {
-//   float width = 1;
-//   float height = 1;
-// };
-//
-// struct Color
-// {
-//   float r = 1;
-//   float g = 1;
-//   float b = 1;
-// };
-//
-// struct Opacity
-// {
-//   float alpha = 1; // [0,1]
-// };
-//
-// // ///////////////////////////////////////////////////////////
-//
-// entt::registry g_registry;
-//
-// void cleanup()
-// {
-//   sgp_shutdown();
-//   sg_shutdown();
-// }
-//
-// void init()
-// {
-//   sg_desc sgdesc = {};
-//   sgdesc.environment = sglue_environment();
-//   sg_setup(&sgdesc);
-//   if (!sg_isvalid())
-//   {
-//     fprintf(stderr, "Failed to create Sokol GFX context!\n");
-//     exit(-1);
-//   }
-//   sgp_desc sgpdesc = {};
-//   sgp_setup(&sgpdesc);
-//   if (!sgp_is_valid())
-//   {
-//     fprintf(stderr, "Failed to create Sokol GP context: %s\n", sgp_get_error_message(sgp_get_last_error()));
-//     exit(-1);
-//   }
-//
-//   for (int x = 0; x < 10; ++x)
-//   {
-//     for (int y = 0; y < 10; ++y)
-//     {
-//       auto entity = g_registry.create();
-//       g_registry.emplace<Position>(entity, static_cast<float>(x), static_cast<float>(y));
-//       g_registry.emplace<Quad>(entity, 1.0f, 1.0f);
-//       g_registry.emplace<Opacity>(entity, 1.0f);
-//       g_registry.emplace<Color>(entity, 1.0f, 0.0f, 1.0f);
-//     }
-//   }
-// }
-//
-// void frame()
-// {
-//   const int window_width = sapp_width();
-//   const int window_height = sapp_height();
-//   // float ratio = static_cast<float>(window_width) / static_cast<float>(window_height);
-//   sgp_begin(window_width, window_height);
-//   sgp_viewport(0, 0, window_width, window_height);
-//   sgp_project(0, 10, 10, 0);
-//   sgp_set_color(0.2f, 0.2f, 0.2f, 1.0f);
-//   sgp_clear();
-//
-//   // //////////////////////////////////////////
-//
-//   g_registry.view<const Position, const Quad>().each([](entt::entity e, const Position &pos, const Quad &quad)
-//   {
-//     Color color = {};
-//     if (const auto* p_color = g_registry.try_get<const Color>(e))
-//     {
-//       color = *p_color;
-//     }
-//
-//     Opacity opacity = {};
-//     if (const auto* p_opacity = g_registry.try_get<const Opacity>(e))
-//     {
-//       opacity = *p_opacity;
-//     }
-//
-//     sgp_set_color(color.r, color.g, color.b, opacity.alpha);
-//
-//     const float half_width = quad.width * 0.5f;
-//     const float half_height = quad.height * 0.5f;
-//     sgp_draw_filled_rect(pos.x - half_width , pos.y - half_height, quad.width, quad.height);
-//   });
-//
-//
-//   // //////////////////////////////////////////
-//   sg_pass pass = {};
-//   pass.swapchain = sglue_swapchain();
-//   sg_begin_pass(&pass);
-//   sgp_flush();
-//   sgp_end();
-//   sg_end_pass();
-//   sg_commit();
-// }
-
+#include <chrono>
 #include <engine/Engine.hpp>
 #include <engine/log.hpp>
 #include <regex>
 #include <utility>
 #include <yaml-cpp/yaml.h>
+#include "engine/Map.hpp"
+#include "engine/components/graphics.hpp"
+#include "engine/components/world.hpp"
+
+void print(const char* msg, engine::ServiceRegistry&) { LOG_DEBUG(msg); }
+
+void init(engine::ServiceRegistry& reg);
 
 
-void print(const char *msg, engine::ServiceRegistry &) { LOG_DEBUG(msg); }
-
-void init_systems(engine::ServiceRegistry &reg);
-
-
-void engine_main(engine::ServiceRegistry &reg) {
+void engine_main(engine::ServiceRegistry& reg) {
   const std::shared_ptr lifecycle = reg.get_service<engine::EngineLifecycle>();
 
   lifecycle->add_callback_static(engine::EngineLifecycle::Stage::init_post, std::bind_front(print, "init_post"));
   lifecycle->add_callback_static(engine::EngineLifecycle::Stage::exit_pre, std::bind_front(print, "exit_pre"));
   lifecycle->add_callback_static(engine::EngineLifecycle::Stage::exit_post, std::bind_front(print, "exit_post"));
 
-  lifecycle->add_callback_static(engine::EngineLifecycle::Stage::init_post, init_systems);
+  lifecycle->add_callback_static(engine::EngineLifecycle::Stage::init_post, init);
 }
 
+using namespace engine::components;
 
-void init_systems(engine::ServiceRegistry &reg) {
+void init(engine::ServiceRegistry& reg) {
   const std::shared_ptr scheduler = reg.get_service<engine::SystemScheduler>();
-  scheduler->add_system("helloworlder", [](entt::registry &) {
-    // LOG_INFO("HELLO FROM SYSTEM");
+
+  scheduler->add_system("helloworlder",[last_update = std::chrono::steady_clock::now()](entt::registry& ecs) mutable {
+    const auto now = std::chrono::steady_clock::now();
+    if (now - last_update < std::chrono::seconds(1)) {
+      return;
+    }
+    last_update = now;
+    // LOG_INFO("HI DUDDLES");
   });
 
-  scheduler->add_system("helloworlder2", [](entt::registry &) {
-    // LOG_INFO("HELLO FROM SYSTEM");
-  });
+  const std::shared_ptr map = reg.get_service<engine::Map>();
+  const std::shared_ptr registry = reg.get_service<entt::registry>();
+
+
+  const engine::Instance& instance = map->create_instance("megainstance");
+  for (int x = -5; x <= 5; ++x) {
+    for (int y = -5; y <= 5; ++y) {
+      const entt::entity entity = registry->create();
+      registry->emplace<world::Instance>(entity, instance.id);
+      registry->emplace<world::Rectangle>(entity, 1, 1);
+      registry->emplace<world::Position>(entity, x, y);
+      registry->emplace<graphics::Renderable>(entity);
+      registry->emplace<graphics::Color>(entity, 1, 0, 1);
+    }
+  }
 }

@@ -1,7 +1,6 @@
 groups:
   engine_map:
-    - engine_map_update
-    - engine_map_garbage_collect
+    - UpdateBBox
   test:
     - helloworlder
     - helloworlder2
