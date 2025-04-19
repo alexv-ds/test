@@ -5,22 +5,17 @@
 #include <sokol_glue.h>
 #include <sokol_gp.h>
 #include <spdlog/cfg/env.h>
-#include <engine/SokolStatus.hpp>
+#include "InputImpl.hpp"
+#include "SokolStatusImpl.hpp"
 
 #ifdef _WIN32
 #include <windows.h>
 #endif
 
-class SokolStatusImpl final : public engine::SokolStatus {
-public:
-  bool is_sokol_initialized() const noexcept override { return true; }
-  bool is_gfx_initialized() const noexcept override { return true; }
-  bool is_spg_initialized() const noexcept override { return true; }
-};
-
 void engine_main(engine::ServiceRegistry&);
 
 std::unique_ptr<engine::Engine> g_engine;
+std::shared_ptr<InputImpl> g_input;
 
 void init() {
 #ifdef SPDLOG_ACTIVE_LEVEL
@@ -57,11 +52,13 @@ void init() {
     g_engine = std::make_unique<engine::Engine>();
     g_engine->service_registry->add_service<engine::SokolStatus>(
       std::make_shared<SokolStatusImpl>());
+    g_input = std::make_unique<InputImpl>();
+    g_engine->service_registry->add_service<engine::Input>(g_input);
     g_engine->init();
     engine_main(*g_engine->service_registry);
   }
   catch (const std::exception& e) {
-    LOG_CRITICAL("Exception: {}", e.what());
+    LOG_CRITICAL("Engine initialization error: {}", e.what());
     std::rethrow_exception(std::current_exception());
   }
 
@@ -79,17 +76,35 @@ void cleanup() {
                                engine::EngineLifecycle::Stage::exit_post);
   }
   g_engine = nullptr;
+  g_input = nullptr;
   sgp_shutdown();
   sg_shutdown();
 }
 
-void frame() { g_engine->run(); }
+void frame() {
+  g_engine->run();
+}
+
+void event(const sapp_event* ev) {
+  if (!g_input) {
+    LOG_CRITICAL("Cannot handle window event: input instance not created");
+    std::exit(EXIT_FAILURE);
+  }
+
+  try {
+    g_input->handle_event(ev);
+  }
+  catch (const std::exception& e) {
+    LOG_ERROR("Window event handle error: {}", e.what());
+  }
+}
 
 sapp_desc sokol_main(int, char**) {
   sapp_desc desc = {};
   desc.init_cb = init;
   desc.frame_cb = frame;
   desc.cleanup_cb = cleanup;
+  desc.event_cb = event;
   desc.window_title = "Test";
   desc.high_dpi = true;
   desc.win32_console_utf8 = true;

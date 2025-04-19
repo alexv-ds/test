@@ -3,6 +3,8 @@ groups:
     - UpdateBBox
   test:
     - scaler
+    - rotator
+    - iam-mover
 
   draw:
     - SokolBegin
@@ -10,6 +12,6 @@ groups:
     - SokolEnd
 
 order:
-  - group.engine_map
   - group.test
+  - group.engine_map
   - group.draw

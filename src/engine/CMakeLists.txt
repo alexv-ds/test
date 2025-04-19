@@ -26,6 +26,8 @@ add_library(engine
   SokolStatus.hpp
   hsv_rgb_conversion.hpp
   hsv_rgb_conversion.cpp
+  Input.cpp
+  Input.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
