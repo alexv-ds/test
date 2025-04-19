@@ -100,9 +100,9 @@ void init(engine::ServiceRegistry& locator) {
       registry->emplace<world::Instance>(entity, instance.id);
       registry->emplace<world::Rectangle>(entity, 1, 1);
       registry->emplace<world::Position>(entity, x, y);
-      registry->emplace<graphics::Color>(entity, 0.3, 0, 0);
-      registry->emplace<world::Scale>(entity);
-      registry->emplace<world::Rotation>(entity);
+      registry->emplace<graphics::Color>(entity, 1, 1, 1);
+      // registry->emplace<world::Scale>(entity);
+      // registry->emplace<world::Rotation>(entity);
     }
   }
 
