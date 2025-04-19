@@ -24,6 +24,8 @@ add_library(engine
   systems/UpdateBBox.hpp
   systems/UpdateBBox.cpp
   SokolStatus.hpp
+  hsv_rgb_conversion.hpp
+  hsv_rgb_conversion.cpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
