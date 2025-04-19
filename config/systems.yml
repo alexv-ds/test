@@ -2,9 +2,14 @@ groups:
   engine_map:
     - UpdateBBox
   test:
-    - helloworlder
-    - helloworlder2
+    - scaler
+
+  draw:
+    - SokolBegin
+    - SokolDraw
+    - SokolEnd
 
 order:
   - group.engine_map
   - group.test
+  - group.draw

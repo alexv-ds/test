@@ -16,7 +16,7 @@ namespace engine::components::graphics {
     float z = 0;
   };
 
-  struct Renderable {};
+  struct Invisible {};
 
   struct Camera {};
 
