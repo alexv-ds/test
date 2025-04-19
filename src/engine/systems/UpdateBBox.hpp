@@ -13,7 +13,7 @@ namespace engine::systems {
   private:
     std::set<entt::entity> dirty_entities;
     std::set<entt::entity> on_update_entities;
-    
+
     void mark_for_update(entt::entity e);
     static void update_bbox(entt::registry& reg, entt::entity e);
   };

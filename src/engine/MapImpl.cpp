@@ -1,18 +1,40 @@
 #include "MapImpl.hpp"
 #include <format>
+#include <loose_quadtree/loose_quadtree.hpp>
 #include <stdexcept>
 
-
 namespace engine {
+  // //////////////////////////// //
+  // ///////// QUADTREE ///////// //
+  // //////////////////////////// //
+
+  using TreeBBox = loose_quadtree::bounding_box<float>;
+
+  struct BBoxExtractor {
+    static void ExtractBoundingBox(const TreeObject* obj, TreeBBox* bbox) {
+      bbox->left = obj->position.x - obj->bbox.width * 0.5f;
+      bbox->top = obj->position.y - obj->bbox.height * 0.5f;
+      bbox->width = obj->bbox.width;
+      bbox->height = obj->bbox.height;
+    }
+  };
+
+  using QuadTree = loose_quadtree::quad_tree<float, TreeObject, BBoxExtractor>;
 
   // //////////////////////////// //
   // ///////// INSTANCE ///////// //
   // //////////////////////////// //
 
-  InstanceImpl::InstanceImpl(const std::string_view name, const std::uint32_t id) :
-      Instance(id), instance_name(name.begin(), name.end()) {}
+  class InstanceImpl final : public Instance, public noncopyable {
+  public:
+    explicit InstanceImpl(std::string_view name, std::uint32_t id) :
+        Instance(id), instance_name(name.begin(), name.end()) {}
+    std::string_view name() const override { return instance_name; }
 
-  std::string_view InstanceImpl::name() const { return instance_name; }
+  private:
+
+    const std::string instance_name;
+  };
 
   // //////////////////////////// //
   // //////////// MAP /////////// //
@@ -22,6 +44,8 @@ namespace engine {
     // first (idx 0) instance always nullptr
     this->instances.push_back(nullptr);
   }
+
+  MapImpl::~MapImpl() = default;
 
   const Instance& MapImpl::create_instance(std::string_view name) {
     // find empty cell
@@ -54,6 +78,10 @@ namespace engine {
   }
 
   const Instance* MapImpl::try_get_instance(const std::uint32_t id) const noexcept {
+    return try_get_impl_instance(id);
+  }
+
+  InstanceImpl* MapImpl::try_get_impl_instance(const std::uint32_t id) const noexcept {
     return id < this->instances.size() ? this->instances[id].get() : nullptr;
   }
 } // namespace engine
