@@ -18,7 +18,7 @@ namespace engine::components::world {
   };
 
   struct Rotation {
-    float angle = 0; // rad
+    float theta = 0; // rad
   };
 
   struct Rectangle {
