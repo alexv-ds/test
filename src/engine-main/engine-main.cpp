@@ -23,10 +23,6 @@ void engine_main(engine::ServiceRegistry&);
 std::unique_ptr<engine::Engine> g_engine;
 
 void init() {
-#ifdef SPDLOG_ACTIVE_LEVEL
-  spdlog::set_level(static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
-#endif
-  spdlog::cfg::load_env_levels();
 #ifdef _WIN32
   if (const void* const handle = sapp_win32_get_hwnd()) {
     ShowWindow(static_cast<HWND>(const_cast<void*>(handle)), SW_MAXIMIZE);
@@ -51,7 +47,6 @@ void init() {
                  sgp_get_error_message(sgp_get_last_error()));
     std::exit(EXIT_FAILURE);
   }
-
 
   try {
     g_engine = std::make_unique<engine::Engine>();
@@ -85,11 +80,29 @@ void cleanup() {
 
 void frame() { g_engine->run(); }
 
+void sapp_log(const char* /*tag*/, std::uint32_t /*log_level*/, std::uint32_t /*log_item_id*/,
+              const char* message_or_null, std::uint32_t line_nr,
+              const char* filename_or_null, void* /*user_data*/) {
+  if (!message_or_null) {
+    return;
+  }
+  spdlog::source_loc loc{filename_or_null, static_cast<int>(line_nr), nullptr};
+  spdlog::default_logger_raw()->log(loc, spdlog::level::debug, message_or_null);
+}
+
 sapp_desc sokol_main(int, char**) {
+#ifdef SPDLOG_ACTIVE_LEVEL
+  spdlog::set_level(static_cast<spdlog::level::level_enum>(SPDLOG_ACTIVE_LEVEL));
+#endif
+  spdlog::cfg::load_env_levels();
+  
   sapp_desc desc = {};
   desc.init_cb = init;
   desc.frame_cb = frame;
   desc.cleanup_cb = cleanup;
+  desc.logger = {
+    .func = sapp_log
+  };
   desc.window_title = "Test";
   desc.high_dpi = true;
   desc.win32_console_utf8 = true;
@@ -97,8 +110,5 @@ sapp_desc sokol_main(int, char**) {
   desc.win32_console_attach = true;
   desc.icon.sokol_default = true;
   desc.sample_count = 8;
-
-  auto features = sapp_sample_count();
-
   return desc;
 }
