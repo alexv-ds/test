@@ -96,5 +96,9 @@ sapp_desc sokol_main(int, char**) {
   desc.win32_console_create = false;
   desc.win32_console_attach = true;
   desc.icon.sokol_default = true;
+  desc.sample_count = 8;
+
+  auto features = sapp_sample_count();
+
   return desc;
 }
