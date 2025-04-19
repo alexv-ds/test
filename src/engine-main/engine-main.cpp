@@ -112,5 +112,8 @@ sapp_desc sokol_main(int, char**) {
   desc.win32_console_attach = true;
   desc.icon.sokol_default = true;
   desc.sample_count = 8;
+  desc.html5_canvas_name = "wasm-app";
+  desc.html5_canvas_resize = false;
+
   return desc;
 }

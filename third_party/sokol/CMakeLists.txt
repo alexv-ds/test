@@ -16,10 +16,15 @@ add_library(sokol-libs STATIC EXCLUDE_FROM_ALL
 )
 target_include_directories(sokol-libs SYSTEM PUBLIC ${sokol_SOURCE_DIR} ${sokol-gp_SOURCE_DIR})
 
-if(WIN32)
 
+if(WIN32)
+  target_compile_definitions(sokol-libs PRIVATE SOKOL_D3D11)
 elseif(LINUX)
+  target_compile_definitions(sokol-libs PRIVATE SOKOL_GLCORE)
   target_link_libraries(sokol-libs PRIVATE X11 Xi Xcursor GL m dl)
+elseif(EMSCRIPTEN)
+  target_compile_definitions(sokol-libs PRIVATE SOKOL_GLES3)
+  target_link_options(sokol-libs PUBLIC "-sFULL_ES3")
 else()
   message(FATAL_ERROR "Unsupported os")
 endif()

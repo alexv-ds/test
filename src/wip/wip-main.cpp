@@ -100,6 +100,9 @@ void init(engine::ServiceRegistry& locator) {
       registry->emplace<world::Instance>(entity, instance.id);
       registry->emplace<world::Rectangle>(entity, 1, 1);
       registry->emplace<world::Position>(entity, x, y);
+      registry->emplace<graphics::Color>(entity, 0.3, 0, 0);
+      registry->emplace<world::Scale>(entity);
+      registry->emplace<world::Rotation>(entity);
     }
   }
 
@@ -120,7 +123,7 @@ void init(engine::ServiceRegistry& locator) {
       const float time = std::chrono::duration_cast<std::chrono::duration<float>>(
                            std::chrono::steady_clock::now().time_since_epoch())
                            .count();
-      constexpr float angular_speed = 0.3 * 3.1415926;
+      constexpr float angular_speed = 0.2 * 3.1415926;
       rotate.theta = angular_speed * time;
       reg.patch<world::Rotation>(e);
     }
