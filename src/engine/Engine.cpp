@@ -5,16 +5,19 @@
 namespace engine
 {
 
-  Engine::Engine()
-  {
+  Engine::Engine() {
     this->ecs_registry = std::make_shared<entt::registry>();
     this->service_registry = std::make_unique<ServiceRegistry>();
     this->engine_lifecycle = std::make_shared<EngineLifecycle>();
-    this->system_scheduler = std::make_shared<SystemScheduler>("config/systems.yml", this->ecs_registry);
+    this->system_scheduler =
+      std::make_shared<SystemScheduler>("config/systems.yml", this->ecs_registry);
 
     service_registry->add_service(this->ecs_registry);
     service_registry->add_service(this->engine_lifecycle);
     service_registry->add_service(this->system_scheduler);
+  }
+
+  void Engine::init() {
     // Map
     {
       const auto map = std::make_shared<MapImpl>();
@@ -22,7 +25,6 @@ namespace engine
 
       system_scheduler->add_system("UpdateBBox", std::make_shared<systems::UpdateBBox>());
     }
-
   }
 
   void Engine::run()

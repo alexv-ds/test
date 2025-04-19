@@ -23,6 +23,7 @@ add_library(engine
   MapImpl.hpp
   systems/UpdateBBox.hpp
   systems/UpdateBBox.cpp
+  SokolStatus.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

@@ -20,8 +20,7 @@ namespace engine
       return *system_scheduler;
     }
 
-
-
+    void init();
     void run();
 
   public:
