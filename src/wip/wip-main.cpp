@@ -88,7 +88,7 @@ void SokolDraw(entt::registry& reg) {
     sgp_reset_color();
 
     if (const auto* bbox = reg.try_get<world::BoundingBox>(e)) {
-      sgp_set_color(1.f, 1.f, 1.f, 1.0f);
+      sgp_set_color(1.f, 1.f, 1.f, .1f);
       sgp_set_blend_mode(SGP_BLENDMODE_BLEND);
       sgp_push_transform();
       sgp_translate(pos.x - bbox->width * 0.5f, pos.y - bbox->height * 0.5f);

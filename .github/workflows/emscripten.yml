@@ -72,7 +72,7 @@ jobs:
           path: gh-pages
       - name: Build gh-pages
         run: |
-          sed 's|@@APP_URL@@|wip.js?v=${{ steps.commit.outputs.sha }}|g' gh-pages.template.html > gh-pages/index.html
+          sed 's|@@APP_URL@@|wip.js?v=${{ github.sha }}|g' gh-pages.template.html > gh-pages/index.html
       - name: Upload gh-pages
         uses: actions/upload-pages-artifact@v3
         with:
