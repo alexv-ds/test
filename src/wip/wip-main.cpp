@@ -119,16 +119,16 @@ void init(engine::ServiceRegistry& locator) {
   const std::shared_ptr registry = locator.get_service<entt::registry>();
 
   const engine::Instance& instance = map->create_instance("megainstance");
-  for (int x = -5; x <= 5; x += 1) {
-    for (int y = -5; y <= 5; y += 1) {
+  for (int x = -5; x <= 5; x += 2) {
+    for (int y = -5; y <= 5; y += 2) {
       const entt::entity entity = registry->create();
       registry->emplace<world::Instance>(entity, instance.id);
       registry->emplace<world::Rectangle>(entity, 1, 1);
       registry->emplace<world::Position>(entity, x, y);
-      // registry->emplace<graphics::Color>(entity, 1, 1, 1);
+      registry->emplace<graphics::Color>(entity, 1, 1, 1);
       // registry->emplace<graphics::Transparency>(entity, .7f);
-      registry->emplace<world::Scale>(entity);
-      // registry->emplace<world::Rotation>(entity);
+      // registry->emplace<world::Scale>(entity);
+      registry->emplace<world::Rotation>(entity);
     }
   }
 
