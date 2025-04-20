@@ -30,7 +30,7 @@ jobs:
       - name: Configure project
         run: |
           cmake -Bbuild -G Ninja \
-            -DCMAKE_TOOLCHAIN_FILE="${{env.EM_CACHE_FOLDER}}/emsdk-main/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake"
+            -DCMAKE_TOOLCHAIN_FILE="${{env.EM_CACHE_FOLDER}}/emsdk-main/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_EXE_LINKER_FLAGS="-flto" \
             -DCMAKE_C_FLAGS="-flto -fno-rtti" \
