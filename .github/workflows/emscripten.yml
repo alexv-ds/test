@@ -6,19 +6,25 @@ on:
 
 env:
   EM_VERSION: 4.0.7
-  EM_CACHE_FOLDER: 'emsdk-cache'
+  EM_CACHE_FOLDER: "emsdk-cache"
+  CPM_SOURCE_CACHE: "cpm-cache"
 
 jobs:
   build:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4.2.2
-      - name: Setup cache
+      - name: Setup emsdk cache
         id: cache-system-libraries
         uses: actions/cache@v4.2.3
         with:
           path: ${{env.EM_CACHE_FOLDER}}
-          key: ${{env.EM_VERSION}}-${{ runner.os }}
+          key: emsdk-${{env.EM_VERSION}}-${{ runner.os }}
+      - name: Setup cpm cache
+        uses: actions/cache@v4.2.3
+        with:
+          path: ${{env.CPM_SOURCE_CACHE}}
+          key: cpm-${{ hashFiles('third_party/**/CMakeLists.txt') }}
       - uses: mymindstorm/setup-emsdk@v14
         with:
           version: ${{env.EM_VERSION}}
