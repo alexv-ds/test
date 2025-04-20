@@ -1,0 +1,40 @@
+name: Build and Deploy on GH-Pages
+on:
+  push:
+#    branches:
+#      - master
+
+env:
+  EM_VERSION: 4.0.7
+  EM_CACHE_FOLDER: 'emsdk-cache'
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4.2.2
+      - name: Setup cache
+        id: cache-system-libraries
+        uses: actions/cache@v4.2.3
+        with:
+          path: ${{env.EM_CACHE_FOLDER}}
+          key: ${{env.EM_VERSION}}-${{ runner.os }}
+      - uses: mymindstorm/setup-emsdk@v14
+        with:
+          version: ${{env.EM_VERSION}}
+          actions-cache-folder: ${{env.EM_CACHE_FOLDER}}
+      - name: Setup cmake
+        uses: jwlawson/actions-setup-cmake@v2.0.2
+        with:
+          cmake-version: '3.29.2'
+      - name: Configure project
+        run: |
+          cmake -Bbuild -G Ninja \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DCMAKE_EXE_LINKER_FLAGS="-flto" \
+            -DCMAKE_C_FLAGS="-flto -fno-rtti" \
+            -DCMAKE_CXX_FLAGS="-flto -fno-rtti" \
+            -DCMAKE_C_FLAGS_RELEASE="-Oz" \
+            -DCMAKE_CXX_FLAGS_RELEASE="-Oz"
+      - name: Build
+        run: cmake --build build --parallel --target wip
