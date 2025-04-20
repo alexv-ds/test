@@ -1,8 +1,8 @@
 name: Build and Deploy on GH-Pages
 on:
   push:
-#    branches:
-#      - master
+    branches:
+      - master
 
 env:
   EM_VERSION: 4.0.7
