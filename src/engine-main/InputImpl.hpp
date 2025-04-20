@@ -4,7 +4,8 @@
 
 class InputImpl final : public engine::Input {
 public:
-  void handle_event(const sapp_event* event);
+  void keyboard_handle_event(const sapp_event* event);
+  void keyboard_clean();
 };
 
 

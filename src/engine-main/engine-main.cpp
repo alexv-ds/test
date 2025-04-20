@@ -17,6 +17,7 @@ void engine_main(engine::ServiceRegistry&);
 
 std::unique_ptr<engine::Engine> g_engine;
 std::shared_ptr<InputImpl> g_input;
+static bool g_imgui_event_interception_flag = false;
 
 void init() {
 #ifdef SPDLOG_ACTIVE_LEVEL
@@ -67,7 +68,7 @@ void init() {
   try {
     g_engine = std::make_unique<engine::Engine>();
     g_engine->service_registry->add_service<engine::SokolStatus>(
-      std::make_shared<SokolStatusImpl>());
+      std::make_shared<SokolStatusImpl>(&g_imgui_event_interception_flag));
     g_input = std::make_unique<InputImpl>();
     g_engine->service_registry->add_service<engine::Input>(g_input);
     g_engine->init();
@@ -115,8 +116,17 @@ void event(const sapp_event* ev) {
     std::exit(EXIT_FAILURE);
   }
 
+  if (g_imgui_event_interception_flag && simgui_handle_event(ev)) {
+    if (ev->type == SAPP_EVENTTYPE_KEY_UP || ev->type == SAPP_EVENTTYPE_KEY_DOWN) {
+      g_input->keyboard_clean();
+    }
+    return;
+  }
+
   try {
-    g_input->handle_event(ev);
+    if (ev->type == SAPP_EVENTTYPE_KEY_UP || ev->type == SAPP_EVENTTYPE_KEY_DOWN) {
+      g_input->keyboard_handle_event(ev);
+    }
   }
   catch (const std::exception& e) {
     LOG_ERROR("Window event handle error: {}", e.what());

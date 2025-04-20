@@ -137,9 +137,9 @@ constexpr static std::array<KeyCode, sokol_keys_count> g_sokol_to_engine = [] {
   return arr;
 }();
 
-void InputImpl::handle_event(const sapp_event* event) {
+void InputImpl::keyboard_handle_event(const sapp_event* event) {
   if (event->type != SAPP_EVENTTYPE_KEY_DOWN && event->type != SAPP_EVENTTYPE_KEY_UP) {
-    return;
+    throw std::runtime_error("invalid event type (expected SAPP_EVENTTYPE_KEY_DOWN or SAPP_EVENTTYPE_KEY_UP");
   }
 
   const auto sokol_idx = static_cast<std::size_t>(event->key_code);
@@ -152,11 +152,17 @@ void InputImpl::handle_event(const sapp_event* event) {
     this->keyboard_state[static_cast<std::size_t>(g_sokol_to_engine[sokol_idx])];
   if (event->type == SAPP_EVENTTYPE_KEY_UP) {
     state = KeyState{};
-  } else {
+  }
+  else {
     state.down = true;
     state.shift = event->modifiers & SAPP_MODIFIER_SHIFT;
     state.ctrl = event->modifiers & SAPP_MODIFIER_CTRL;
     state.alt = event->modifiers & SAPP_MODIFIER_ALT;
     state.super = event->modifiers & SAPP_MODIFIER_SUPER;
   }
+}
+
+void InputImpl::keyboard_clean() {
+  static_assert(std::is_trivially_copyable_v<decltype(this->keyboard_state)>);
+  std::memset(&this->keyboard_state, 0, sizeof(decltype(this->keyboard_state)));
 }

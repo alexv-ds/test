@@ -7,12 +7,14 @@
 #include <engine/components/world.hpp>
 #include <engine/hsv_rgb_conversion.hpp>
 #include <engine/log.hpp>
+#include <imgui.h>
 #include <random>
 #include <regex>
 #include <sokol_app.h>
 #include <sokol_gfx.h>
 #include <sokol_glue.h>
 #include <sokol_gp.h>
+#include <util/sokol_imgui.h>
 #include <utility>
 
 void init(engine::ServiceRegistry& locator);
@@ -32,6 +34,14 @@ void SokolBegin(entt::registry&) {
   sgp_viewport(0, 0, width, height);
   sgp_set_color(0.1f, 0.1f, 0.1f, 1.0f);
   sgp_clear();
+
+  const simgui_frame_desc_t simgui_frame_desc = {.width = width,
+                                                 .height = height,
+                                                 .delta_time = sapp_frame_duration(),
+                                                 .dpi_scale = sapp_dpi_scale()};
+  simgui_new_frame(&simgui_frame_desc);
+
+  ImGui::ShowDemoWindow();
 }
 
 void SokolEnd(entt::registry&) {
@@ -42,6 +52,8 @@ void SokolEnd(entt::registry&) {
   sgp_flush();
   // Finish a draw command queue, clearing it.
   sgp_end();
+  // Draw imgui
+  simgui_render();
   // End render pass.
   sg_end_pass();
   // Commit Sokol render.
@@ -108,9 +120,11 @@ void init(engine::ServiceRegistry& locator) {
   const std::shared_ptr scheduler = locator.get_service<engine::SystemScheduler>();
   const std::shared_ptr sokol_status = locator.get_service<engine::SokolStatus>();
   if (!sokol_status->is_sokol_initialized() || !sokol_status->is_gfx_initialized() ||
-      !sokol_status->is_spg_initialized()) {
-    throw std::runtime_error("Sokol is not fully (base, gfx, sgp) initialized");
+      !sokol_status->is_spg_initialized() || !sokol_status->is_util_imgui_initialized()) {
+    throw std::runtime_error("Sokol is not fully (base, gfx, sgp, imgui) initialized");
   }
+  sokol_status->set_imgui_events_interception(true);
+
   scheduler->add_system("SokolBegin", SokolBegin);
   scheduler->add_system("SokolEnd", SokolEnd);
   scheduler->add_system("SokolDraw", SokolDraw);
