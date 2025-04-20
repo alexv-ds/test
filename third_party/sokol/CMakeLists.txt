@@ -15,7 +15,12 @@ add_library(sokol-libs STATIC EXCLUDE_FROM_ALL
   sokol.c
 )
 target_include_directories(sokol-libs SYSTEM PUBLIC ${sokol_SOURCE_DIR} ${sokol-gp_SOURCE_DIR})
-
+target_compile_definitions(sokol-libs PRIVATE
+  $<$<CONFIG:Debug>:SOKOL_DEBUG>
+  $<$<CONFIG:RelWithDebInfo>:SOKOL_DEBUG>
+  $<$<CONFIG:Release>:NDEBUG>
+  $<$<CONFIG:MinSizeRel>:NDEBUG>
+)
 
 if(WIN32)
   target_compile_definitions(sokol-libs PRIVATE SOKOL_D3D11)
