@@ -1,6 +1,7 @@
 #include "Engine.hpp"
 #include "MapImpl.hpp"
 #include "systems/UpdateBBox.hpp"
+#include "systems/UpdateMap.hpp"
 
 namespace engine
 {
@@ -22,8 +23,9 @@ namespace engine
     {
       const auto map = std::make_shared<MapImpl>();
       service_registry->add_service<Map>(map);
-
       system_scheduler->add_system("UpdateBBox", std::make_shared<systems::UpdateBBox>());
+      system_scheduler->add_system("UpdateMap",
+                                   std::make_shared<systems::UpdateMap>(map));
     }
   }
 

@@ -1,11 +1,12 @@
 groups:
   engine_map:
     - UpdateBBox
+    - UpdateMap
   test:
     - scaler
     - rotator
     - iam-mover
-
+    -
   draw:
     - SokolBegin
     - SokolDraw
@@ -14,4 +15,5 @@ groups:
 order:
   - group.test
   - group.engine_map
+  - intersect_colorizer
   - group.draw

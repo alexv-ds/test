@@ -5,6 +5,7 @@
 #include <engine/SokolStatus.hpp>
 #include <engine/components/graphics.hpp>
 #include <engine/components/world.hpp>
+#include <engine/hsv_rgb_conversion.hpp>
 #include <engine/log.hpp>
 #include <random>
 #include <regex>
@@ -147,15 +148,39 @@ void init(engine::ServiceRegistry& locator) {
       }
       if (input->keyboard(KeyCode::s)) {
         position.y -= step_size;
+        pos_updated = true;
       }
       if (input->keyboard(KeyCode::a)) {
         position.x -= step_size;
+        pos_updated = true;
       }
       if (input->keyboard(KeyCode::d)) {
         position.x += step_size;
+        pos_updated = true;
       }
       if (pos_updated) {
         reg.patch<world::Position>(i_am);
+      }
+    });
+
+    scheduler->add_system("intersect_colorizer", [i_am, map](entt::registry& reg) {
+      const world::Instance* instance = reg.try_get<world::Instance>(i_am);
+      const world::Position* position = reg.try_get<world::Position>(i_am);
+      const world::BoundingBox* bbox = reg.try_get<world::BoundingBox>(i_am);
+      if (!instance || !position || !bbox) {
+        return;
+      }
+      const engine::Instance* map_instance = map->try_get_instance(instance->id);
+      if (!map_instance) {
+        return;
+      }
+      std::vector<entt::entity> entities;
+      map_instance->query(entities, *position, *bbox);
+      std::default_random_engine random_engine{std::random_device{}()};
+      std::uniform_real_distribution<float> hue_dist(0.0, 360.0);
+      for (const auto e : entities) {
+        const engine::Rgb rgb = engine::hsv2rgb({hue_dist(random_engine), 1, 1});
+        reg.emplace_or_replace<graphics::Color>(e, rgb.r, rgb.g, rgb.b);
       }
     });
   }

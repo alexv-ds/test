@@ -28,6 +28,8 @@ add_library(engine
   hsv_rgb_conversion.cpp
   Input.cpp
   Input.hpp
+  systems/UpdateMap.cpp
+  systems/UpdateMap.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

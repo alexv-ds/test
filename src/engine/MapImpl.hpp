@@ -18,7 +18,6 @@ namespace engine {
     components::world::Instance instance{};
   };
 
-
   class MapImpl final : public Map, public noncopyable {
   public:
     MapImpl();
@@ -29,8 +28,15 @@ namespace engine {
     [[nodiscard]] const Instance*
     try_get_instance(std::uint32_t id) const noexcept override;
 
-    void update_tree_object(TreeObject* obj);
+    /**
+     * Update tree object
+     * @param obj
+     * @return true if updated
+     */
+    bool update_tree_object(TreeObject* obj);
     void remove_tree_object(TreeObject* obj);
+    /// @brief remove all tree objects from all instances
+    void clean_tree_objects();
 
   private:
     [[nodiscard]] InstanceImpl* try_get_impl_instance(std::uint32_t id) const noexcept;

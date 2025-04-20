@@ -2,6 +2,7 @@
 #include <format>
 #include <loose_quadtree/loose_quadtree.hpp>
 #include <stdexcept>
+#include "log.hpp"
 
 namespace engine {
   // //////////////////////////// //
@@ -11,11 +12,17 @@ namespace engine {
   using TreeBBox = loose_quadtree::bounding_box<float>;
 
   struct BBoxExtractor {
+    static TreeBBox make_bbox(const components::world::Position& position,
+                              const components::world::BoundingBox& bbox) {
+      const float left = position.x - bbox.width * 0.5f;
+      const float top = position.y - bbox.height * 0.5f;
+      const float width = bbox.width;
+      const float height = bbox.height;
+      return {left, top, width, height};
+    }
+
     static void ExtractBoundingBox(const TreeObject* obj, TreeBBox* bbox) {
-      bbox->left = obj->position.x - obj->bbox.width * 0.5f;
-      bbox->top = obj->position.y - obj->bbox.height * 0.5f;
-      bbox->width = obj->bbox.width;
-      bbox->height = obj->bbox.height;
+      *bbox = make_bbox(obj->position, obj->bbox);
     }
   };
 
@@ -30,9 +37,30 @@ namespace engine {
     explicit InstanceImpl(std::string_view name, std::uint32_t id) :
         Instance(id), instance_name(name.begin(), name.end()) {}
     std::string_view name() const override { return instance_name; }
+    QuadTree& tree() { return tree_; }
+
+    void query(std::vector<EntityData>& out, const Position& pos,
+               const BoundingBox& bbox) const override {
+      auto q = this->tree_.query_intersects_region(BBoxExtractor::make_bbox(pos, bbox));
+      while (!q.end_of_query()) {
+        TreeObject* obj = q.get_current();
+        out.emplace_back(obj->position, obj->bbox, obj->entity);
+        q.next();
+      }
+    }
+
+    void query(std::vector<entt::entity>& out, const Position& pos,
+               const BoundingBox& bbox) const override {
+      auto q = this->tree_.query_intersects_region(BBoxExtractor::make_bbox(pos, bbox));
+      while (!q.end_of_query()) {
+        TreeObject* obj = q.get_current();
+        out.emplace_back(obj->entity);
+        q.next();
+      }
+    }
 
   private:
-
+    mutable QuadTree tree_;
     const std::string instance_name;
   };
 
@@ -79,6 +107,37 @@ namespace engine {
 
   const Instance* MapImpl::try_get_instance(const std::uint32_t id) const noexcept {
     return try_get_impl_instance(id);
+  }
+
+  bool MapImpl::update_tree_object(TreeObject* obj) {
+    if (!obj) {
+      throw std::runtime_error("cannot update tree object: obj is nullptr");
+    }
+    auto* instance = this->try_get_impl_instance(obj->instance.id);
+    if (!instance) {
+      return false;
+    }
+    instance->tree().update(obj);
+    return true;
+  }
+
+  void MapImpl::remove_tree_object(TreeObject* obj) {
+    if (!obj) {
+      throw std::runtime_error("cannot remove tree object: obj is nullptr");
+    }
+    auto* instance = this->try_get_impl_instance(obj->instance.id);
+    if (!instance) {
+      return;
+    }
+    instance->tree().remove(obj);
+  }
+
+  void MapImpl::clean_tree_objects() {
+    for (auto& instance : this->instances) {
+      if (instance) {
+        instance->tree().clear();
+      }
+    }
   }
 
   InstanceImpl* MapImpl::try_get_impl_instance(const std::uint32_t id) const noexcept {

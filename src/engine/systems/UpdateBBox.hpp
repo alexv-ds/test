@@ -1,5 +1,5 @@
 #pragma once
-#include <set>
+#include <unordered_set>
 #include "../System.hpp"
 
 namespace engine::systems {
@@ -11,8 +11,8 @@ namespace engine::systems {
     void update() override;
 
   private:
-    std::set<entt::entity> dirty_entities;
-    std::set<entt::entity> on_update_entities;
+    std::unordered_set<entt::entity> dirty_entities;
+    std::unordered_set<entt::entity> on_update_entities;
 
     void mark_for_update(entt::entity e);
     static void update_bbox(entt::registry& reg, entt::entity e);
