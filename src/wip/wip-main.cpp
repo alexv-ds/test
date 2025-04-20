@@ -59,6 +59,7 @@ void SokolDraw(entt::registry& reg) {
     world::Rotation rotation{.0};
     world::Scale scale{1, 1};
     graphics::Color color{1, 1, 1};
+    graphics::Transparency transparency{1};
     if (const auto* p_rotation = reg.try_get<const world::Rotation>(e)) {
       rotation = *p_rotation;
     }
@@ -68,17 +69,40 @@ void SokolDraw(entt::registry& reg) {
     if (const auto* p_color = reg.try_get<const graphics::Color>(e)) {
       color = *p_color;
     }
+    if (const auto* p_transparency = reg.try_get<const graphics::Transparency>(e)) {
+      transparency.a = std::clamp(p_transparency->a, 0.0f, 1.0f);
+    }
+
+    sgp_set_color(color.r, color.g, color.b, transparency.a);
+    sgp_set_blend_mode(SGP_BLENDMODE_BLEND);
 
     sgp_push_transform();
     sgp_translate(pos.x - rect.width * scale.x * 0.5f,
                   pos.y - rect.height * scale.x * 0.5f);
     sgp_scale(scale.x, scale.y);
-    sgp_rotate_at(rotation.theta, rect.width * 0.5, rect.height * 0.5);
-    sgp_set_color(color.r, color.g, color.b, 1.0f);
-    sgp_draw_filled_rect(0, 0, rect.width, rect.height);
+    sgp_rotate_at(rotation.theta, rect.width * 0.5f, rect.height * 0.5f);
+    sgp_draw_filled_rect(0.f, 0.f, rect.width, rect.height);
     sgp_pop_transform();
+
+    sgp_reset_blend_mode();
+    sgp_reset_color();
+
+    if (const auto* bbox = reg.try_get<world::BoundingBox>(e)) {
+      sgp_set_color(.0f, 1.f, .0f, .3f);
+      sgp_set_blend_mode(SGP_BLENDMODE_BLEND);
+      sgp_push_transform();
+      sgp_translate(pos.x - bbox->width * 0.5f, pos.y - bbox->height * 0.5f);
+      sgp_draw_filled_rect(0.f, 0.f, bbox->width, bbox->height);
+      sgp_pop_transform();
+      sgp_reset_blend_mode();
+      sgp_reset_color();
+    }
   }
 }
+
+struct BBoxDrawer {
+  entt::entity target = entt::null;
+};
 
 void init(engine::ServiceRegistry& locator) {
   const std::shared_ptr scheduler = locator.get_service<engine::SystemScheduler>();
@@ -102,8 +126,9 @@ void init(engine::ServiceRegistry& locator) {
       registry->emplace<world::Rectangle>(entity, 1, 1);
       registry->emplace<world::Position>(entity, x, y);
       registry->emplace<graphics::Color>(entity, 1, 1, 1);
+      // registry->emplace<graphics::Transparency>(entity, .7f);
       // registry->emplace<world::Scale>(entity);
-      // registry->emplace<world::Rotation>(entity);
+      registry->emplace<world::Rotation>(entity);
     }
   }
 
@@ -132,10 +157,11 @@ void init(engine::ServiceRegistry& locator) {
 
   {
     std::shared_ptr input = locator.get_service<engine::Input>();
-    entt::entity i_am = registry->create();
+    const auto i_am = registry->create();
     registry->emplace<world::Instance>(i_am, instance.id);
     registry->emplace<world::Rectangle>(i_am, 0.7, 0.7);
     registry->emplace<world::Position>(i_am);
+    registry->emplace<world::Rotation>(i_am);
     registry->emplace<graphics::Color>(i_am, 1, 1, 0);
     scheduler->add_system("iam-mover", [i_am, input](entt::registry& reg) {
       using KeyCode = engine::Input::KeyCode;
@@ -179,6 +205,9 @@ void init(engine::ServiceRegistry& locator) {
       std::default_random_engine random_engine{std::random_device{}()};
       std::uniform_real_distribution<float> hue_dist(0.0, 360.0);
       for (const auto e : entities) {
+        if (e == i_am) {
+          continue;
+        }
         const engine::Rgb rgb = engine::hsv2rgb({hue_dist(random_engine), 1, 1});
         reg.emplace_or_replace<graphics::Color>(e, rgb.r, rgb.g, rgb.b);
       }

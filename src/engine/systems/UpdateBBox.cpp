@@ -1,10 +1,14 @@
 #include "UpdateBBox.hpp"
+#include <cmath>
 #include "../components/world.hpp"
 #include "../log.hpp"
+#include "engine/components/graphics.hpp"
 
 namespace engine::systems {
   using Rectangle = components::world::Rectangle;
   using BoundingBox = components::world::BoundingBox;
+  using Scale = components::world::Scale;
+  using Rotation = components::world::Rotation;
 
   // ////////////////////////////////// //
   // /////////// UpdateBBox /////////// //
@@ -18,15 +22,33 @@ namespace engine::systems {
     }
 
     reg.on_construct<Rectangle>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_construct<Scale>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_construct<Rotation>().connect<&UpdateBBox::mark_for_update>(*this);
+
     reg.on_update<Rectangle>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_update<Scale>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_update<Rotation>().connect<&UpdateBBox::mark_for_update>(*this);
+
     reg.on_destroy<Rectangle>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_destroy<Scale>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_destroy<Rotation>().connect<&UpdateBBox::mark_for_update>(*this);
   }
 
   void UpdateBBox::stop() {
     auto& reg = this->registry();
+
     reg.on_construct<Rectangle>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_construct<Scale>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_construct<Rotation>().disconnect<&UpdateBBox::mark_for_update>(*this);
+
     reg.on_update<Rectangle>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_update<Scale>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_update<Rotation>().disconnect<&UpdateBBox::mark_for_update>(*this);
+
     reg.on_destroy<Rectangle>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_destroy<Scale>().disconnect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_destroy<Rotation>().disconnect<&UpdateBBox::mark_for_update>(*this);
+
     this->dirty_entities.clear();
     this->on_update_entities.clear();
   }
@@ -59,12 +81,25 @@ namespace engine::systems {
     if (!rect) {
       return;
     }
-    // TODO: добавить Rotation и Scale
-
     BoundingBox bbox = {
       .width = rect->width,
       .height = rect->height,
     };
+
+    if (const auto* scale = reg.try_get<Scale>(e)) {
+      bbox.width *= scale->x;
+      bbox.height *= scale->y;
+    }
+
+    if (const auto* rotation = reg.try_get<Rotation>(e)) {
+      const float width = bbox.width * std::abs(std::cos(rotation->theta)) +
+        bbox.height * std::abs(std::sin(rotation->theta));
+      const float height = bbox.width * std::abs(std::sin(rotation->theta)) +
+        bbox.height * std::abs(std::cos(rotation->theta));
+      bbox.width = width;
+      bbox.height = height;
+    }
+
     reg.emplace_or_replace<BoundingBox>(e, bbox);
   }
 

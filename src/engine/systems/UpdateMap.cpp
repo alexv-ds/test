@@ -91,6 +91,8 @@ namespace engine::systems {
     registry().on_destroy<Position>().disconnect<&UpdateMap::insert_into_dirty>(this);
     registry().on_destroy<BoundingBox>().disconnect<&UpdateMap::insert_into_dirty>(this);
     registry().on_destroy<Instance>().disconnect<&UpdateMap::insert_into_dirty>(this);
+
+    this->dirty_entities.clear();
   }
 
   void UpdateMap::insert_into_dirty(entt::entity e) {
