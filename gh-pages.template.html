@@ -1,0 +1,36 @@
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta charset="UTF-8"/>
+  <title>😊 Emscripten App</title>
+  <style type="text/css">
+    body {
+      margin: 0;
+      background-color: black;
+    }
+    .wasm-app {
+      position: absolute;
+      top: 0px;
+      left: 0px;
+      margin: 0px;
+      border: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      display: block;
+      image-rendering: optimizeSpeed;
+      image-rendering: -moz-crisp-edges;
+      image-rendering: -o-crisp-edges;
+      image-rendering: -webkit-optimize-contrast;
+      image-rendering: optimize-contrast;
+      image-rendering: crisp-edges;
+      image-rendering: pixelated;
+      -ms-interpolation-mode: nearest-neighbor;
+    }
+  </style>
+</head>
+  <body style="background:black">
+    <canvas class="wasm-app" id="wasm-app" oncontextmenu="event.preventDefault()"></canvas>
+    <script type="text/javascript" src="@@APP_URL@@"></script>
+  </body>
+</html>
