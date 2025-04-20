@@ -4,6 +4,7 @@
 #include <sokol_gfx.h>
 #include <sokol_glue.h>
 #include <sokol_gp.h>
+#include <util/sokol_imgui.h>
 #include <spdlog/cfg/env.h>
 #include "InputImpl.hpp"
 #include "SokolStatusImpl.hpp"
@@ -32,22 +33,37 @@ void init() {
   }
 #endif
 
-  sg_desc sg_desc = {};
-  sg_desc.environment = sglue_environment();
-  sg_setup(&sg_desc);
-  if (!sg_isvalid()) {
-    LOG_CRITICAL("Failed to create Sokol GFX context");
-    std::exit(EXIT_FAILURE);
+  // Sokol GFX
+  {
+    sg_desc sg_desc = {};
+    sg_desc.environment = sglue_environment();
+    sg_setup(&sg_desc);
+    if (!sg_isvalid()) {
+      LOG_CRITICAL("Failed to create Sokol GFX context");
+      std::exit(EXIT_FAILURE);
+    }
   }
 
-  constexpr sgp_desc sgp_desc = {};
-  sgp_setup(&sgp_desc);
-  if (!sgp_is_valid()) {
-    LOG_CRITICAL("Failed to create Sokol GP context: {}",
-                 sgp_get_error_message(sgp_get_last_error()));
-    std::exit(EXIT_FAILURE);
+
+  // SGP
+  {
+    constexpr sgp_desc sgp_desc = {};
+    sgp_setup(&sgp_desc);
+    if (!sgp_is_valid()) {
+      LOG_CRITICAL("Failed to create Sokol GP context: {}",
+                   sgp_get_error_message(sgp_get_last_error()));
+      std::exit(EXIT_FAILURE);
+    }
   }
 
+
+  // Imgui
+  {
+    constexpr simgui_desc_t simgui_desc = {};
+    simgui_setup(&simgui_desc);
+  }
+
+  // Engine
   try {
     g_engine = std::make_unique<engine::Engine>();
     g_engine->service_registry->add_service<engine::SokolStatus>(
@@ -69,6 +85,7 @@ void init() {
 }
 
 void cleanup() {
+  // engine
   if (g_engine) {
     g_engine->lifecycle().emit(*g_engine->service_registry,
                                engine::EngineLifecycle::Stage::exit_pre);
@@ -77,7 +94,14 @@ void cleanup() {
   }
   g_engine = nullptr;
   g_input = nullptr;
+
+  // Imgui
+  simgui_shutdown();
+
+  // SGP
   sgp_shutdown();
+
+  // Sokol GFX
   sg_shutdown();
 }
 

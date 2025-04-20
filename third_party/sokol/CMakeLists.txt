@@ -11,9 +11,21 @@ CPMAddPackage(
   DOWNLOAD_ONLY
 )
 
-add_library(sokol-libs STATIC EXCLUDE_FROM_ALL
-  sokol.c
+CPMAddPackage(
+  NAME ImGui
+  URL "https://github.com/ocornut/imgui/archive/refs/tags/v1.91.3.tar.gz"
+  DOWNLOAD_ONLY
 )
+
+add_library(sokol-libs STATIC EXCLUDE_FROM_ALL
+  sokol.cpp
+  ${ImGui_SOURCE_DIR}/imgui.cpp
+  ${ImGui_SOURCE_DIR}/imgui_demo.cpp
+  ${ImGui_SOURCE_DIR}/imgui_draw.cpp
+  ${ImGui_SOURCE_DIR}/imgui_tables.cpp
+  ${ImGui_SOURCE_DIR}/imgui_widgets.cpp
+)
+target_include_directories(sokol-libs SYSTEM PUBLIC ${ImGui_SOURCE_DIR})
 target_include_directories(sokol-libs SYSTEM PUBLIC ${sokol_SOURCE_DIR} ${sokol-gp_SOURCE_DIR})
 target_compile_definitions(sokol-libs PRIVATE
   $<$<CONFIG:Debug>:SOKOL_DEBUG>
