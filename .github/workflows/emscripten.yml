@@ -73,6 +73,11 @@ jobs:
       - name: Build gh-pages
         run: |
           sed 's|@@APP_URL@@|wip.js|g' gh-pages.template.html > gh-pages/index.html
+      - name: Upload gh-pages
+        id: deployment
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: gh-pages
       - name: Deploy gh-pages
         id: deployment
         uses: actions/deploy-pages@v4
