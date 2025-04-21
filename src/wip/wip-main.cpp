@@ -7,7 +7,7 @@
 #include <engine/components/world.hpp>
 #include <engine/hsv_rgb_conversion.hpp>
 #include <engine/log.hpp>
-#include <imgui.h>
+// #include <imgui.h>
 #include <random>
 #include <regex>
 #include <sokol_app.h>
@@ -41,7 +41,7 @@ void SokolBegin(entt::registry&) {
                                                  .dpi_scale = sapp_dpi_scale()};
   simgui_new_frame(&simgui_frame_desc);
 
-  ImGui::ShowDemoWindow();
+  // ImGui::ShowDemoWindow();
 }
 
 void SokolEnd(entt::registry&) {
