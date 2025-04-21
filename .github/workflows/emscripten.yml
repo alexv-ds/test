@@ -25,7 +25,7 @@ jobs:
         with:
           path: ${{env.CPM_SOURCE_CACHE}}
           key: cpm-${{ hashFiles('third_party/**/CMakeLists.txt') }}
-      - name: ccache
+      - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ccache-${{ github.job }}-${{ matrix.os }}
