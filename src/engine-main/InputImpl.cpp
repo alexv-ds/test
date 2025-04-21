@@ -1,6 +1,7 @@
 #include "InputImpl.hpp"
 #include <engine/log.hpp>
 #include <array>
+#include <cstring>
 
 using KeyCode = engine::Input::KeyCode;
 constexpr std::size_t sokol_keys_count = 349; // see sapp_keycode into sokol_app.h
