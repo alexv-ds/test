@@ -9,6 +9,8 @@
 #include <random>
 #include <sokol_app.h>
 
+#include "engine/Input.hpp"
+
 void init(engine::ServiceRegistry& locator);
 
 void engine_main(engine::ServiceRegistry& reg) {
@@ -78,6 +80,34 @@ void init(engine::ServiceRegistry& locator) {
   registry->emplace<graphics::Camera>(camera);
   registry->emplace<graphics::CameraLinkWithMainWindow>(
     camera, graphics::CameraLinkWithMainWindow{.preferred_height = 9});
+  registry->emplace<world::Scale>(camera);
+
+
+  scheduler->add_system("InputQEScaleController", [camera, &locator](entt::registry& reg) {
+    if (!reg.valid(camera)) {
+      return;
+    }
+    auto* p_scale = reg.try_get<world::Scale>(camera);
+    if (!p_scale) {
+      return;
+    }
+
+    auto input = locator.get_service<engine::Input>();
+    constexpr float speed = 0.03;
+    if (input->keyboard(engine::Input::KeyCode::q)) {
+      p_scale->x += speed;
+      p_scale->y += speed;
+    }
+
+    if (input->keyboard(engine::Input::KeyCode::e)) {
+      p_scale->x -= speed;
+      p_scale->y -= speed;
+    }
+
+    p_scale->x = std::max(p_scale->x, 0.0f);
+    p_scale->y = std::max(p_scale->y, 0.0f);
+    reg.patch<world::Scale>(camera);
+  });
 
   scheduler->add_system("UpdatePosition", [](entt::registry& reg) {
     const auto view = reg.view<world::Position, OrbitObject>();

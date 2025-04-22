@@ -10,8 +10,8 @@ groups:
   engine-draw-end:
     - RenderSokolEnd
 order:
-#  - group.orbit
   - UpdatePosition
+  - InputQEScaleController
   - group.engine-update
   - group.engine-draw-begin
   - group.engine-draw-end

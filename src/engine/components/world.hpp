@@ -13,8 +13,8 @@ namespace engine::components::world {
   };
 
   struct Scale {
-    float x = 0;
-    float y = 0;
+    float x = 1;
+    float y = 1;
   };
 
   struct Rotation {
