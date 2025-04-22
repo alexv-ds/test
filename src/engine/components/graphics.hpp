@@ -28,4 +28,14 @@ namespace engine::components::graphics {
     entt::entity target = entt::null;
   };
 
+  struct BlendMode {
+    enum Mode {
+      alpha,
+      add,
+      modulate,
+      multiply
+    };
+    Mode mode = alpha;
+  };
+
 } // namespace engine::components::graphics

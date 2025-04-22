@@ -9,13 +9,9 @@ groups:
     - RenderSokolDraw
   engine-draw-end:
     - RenderSokolEnd
-  test:
-    - scaler
-    - rotator
-
 order:
-  - group.test
-  - intersect_colorizer
+#  - group.orbit
+  - UpdatePosition
   - group.engine-update
   - group.engine-draw-begin
   - group.engine-draw-end

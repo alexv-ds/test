@@ -22,8 +22,8 @@ namespace engine::components::world {
   };
 
   struct Rectangle {
-    float width = 0;
-    float height = 0;
+    float width = 1;
+    float height = 1;
   };
 
   struct BoundingBox {

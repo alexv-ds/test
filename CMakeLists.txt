@@ -9,7 +9,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-add_compile_options(-Wall -Wextra -pedantic -Wno-language-extension-token)
+add_compile_options(-fno-rtti -Wall -Wextra -pedantic -Wno-language-extension-token)
 
 include(cmake/CPM.cmake)
 

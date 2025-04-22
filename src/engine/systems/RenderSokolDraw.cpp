@@ -1,8 +1,8 @@
 #include "RenderSokolDraw.hpp"
-
+#include <array>
+#include <optional>
 #include <sokol_gfx.h>
 #include <sokol_gp.h>
-
 #include "../components/graphics.hpp"
 #include "../components/world.hpp"
 #include "../log.hpp"
@@ -21,6 +21,7 @@ namespace engine::systems {
     graphics::Color color{.r = 1.0f, .g = 1.0f, .b = 1.0f};
     graphics::Transparency transparency{.a = 1.0f};
     graphics::Layer layer{.z = 0};
+    std::optional<graphics::BlendMode> blend;
   };
 
   // TODO: VERY VERY VERY SIMPLE AND STUPID - REWRITE ME
@@ -117,6 +118,9 @@ namespace engine::systems {
               reg.try_get<graphics::Transparency>(data.entity)) {
           draw_object.transparency = *p_transparency;
         }
+        if (const auto p_blend_mode = reg.try_get<graphics::BlendMode>(data.entity)) {
+          draw_object.blend = *p_blend_mode;
+        }
         draw_objects.push_back(draw_object);
       }
 
@@ -127,8 +131,27 @@ namespace engine::systems {
                   camera_width * 0.5f + camera_position.x,
                   camera_height * 0.5f + camera_position.y,
                   -camera_height * 0.5f + camera_position.y);
+
+
+      constexpr auto engine_to_sokol_blend = [](const graphics::BlendMode::Mode mode) {
+        switch (mode) {
+        case graphics::BlendMode::add:
+          return SGP_BLENDMODE_ADD;
+        case graphics::BlendMode::modulate:
+          return SGP_BLENDMODE_MOD;
+        case graphics::BlendMode::multiply:
+          return SGP_BLENDMODE_MUL;
+        default:
+          return SGP_BLENDMODE_BLEND;
+        }
+      };
+
       for (const auto& obj : draw_objects) {
-        sgp_set_blend_mode(SGP_BLENDMODE_BLEND);
+        if (obj.blend) {
+          sgp_set_blend_mode(engine_to_sokol_blend(obj.blend->mode));
+        } else {
+          sgp_set_blend_mode(SGP_BLENDMODE_NONE);
+        }
         sgp_set_color(obj.color.r, obj.color.g, obj.color.b, obj.transparency.a);
         sgp_push_transform();
         sgp_translate(obj.position.x - obj.rectangle.width * obj.scale.x * 0.5f,
