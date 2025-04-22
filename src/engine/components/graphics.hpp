@@ -20,4 +20,12 @@ namespace engine::components::graphics {
 
   struct Camera {};
 
+  struct CameraLinkWithMainWindow {
+    float preferred_height = 15;
+  };
+
+  struct CameraCopyPositionFrom {
+    entt::entity target = entt::null;
+  };
+
 } // namespace engine::components::graphics

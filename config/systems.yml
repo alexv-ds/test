@@ -1,19 +1,22 @@
 groups:
-  engine_map:
+  engine-update:
+    - InputWASDPositionController
+    - SyncCameraWithMainWindow
     - UpdateBBox
     - UpdateMap
+  engine-draw-begin:
+    - RenderSokolBegin
+    - RenderSokolDraw
+  engine-draw-end:
+    - RenderSokolEnd
   test:
     - scaler
     - rotator
-    - iam-mover
-    -
-  draw:
-    - SokolBegin
-    - SokolDraw
-    - SokolEnd
 
 order:
   - group.test
-  - group.engine_map
   - intersect_colorizer
-  - group.draw
+  - group.engine-update
+  - group.engine-draw-begin
+  - group.engine-draw-end
+

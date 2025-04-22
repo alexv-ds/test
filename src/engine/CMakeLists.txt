@@ -30,9 +30,20 @@ add_library(engine
   Input.hpp
   systems/UpdateMap.cpp
   systems/UpdateMap.hpp
+  components/other.hpp
+  systems/RenderSokolBegin.cpp
+  systems/RenderSokolBegin.hpp
+  systems/RenderSokolEnd.cpp
+  systems/RenderSokolEnd.hpp
+  systems/RenderSokolDraw.cpp
+  systems/RenderSokolDraw.hpp
+  systems/InputWASDPositionController.cpp
+  systems/InputWASDPositionController.hpp
+  systems/SyncCameraWithMainWindow.cpp
+  systems/SyncCameraWithMainWindow.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_link_libraries(engine PUBLIC third_party::entt third_party::spdlog third_party::yaml-cpp)
-target_link_libraries(engine PRIVATE loose_quadtree::loose_quadtree)
+target_link_libraries(engine PRIVATE loose_quadtree::loose_quadtree third_party::sokol)
 target_compile_definitions(engine PUBLIC SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)
