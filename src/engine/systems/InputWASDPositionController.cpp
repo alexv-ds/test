@@ -38,6 +38,7 @@ namespace engine::systems {
       const float factor = (shift ? opts.shift_speed : opts.speed) * frame_duration;
       pos.x += dx * factor;
       pos.y += dy * factor;
+      registry().patch<Position>(e);
     }
   }
 } // namespace engine::systems
