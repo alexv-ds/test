@@ -24,10 +24,6 @@ namespace engine::components::graphics {
     float preferred_height = 15;
   };
 
-  struct CameraCopyPositionFrom {
-    entt::entity target = entt::null;
-  };
-
   struct BlendMode {
     enum Mode {
       alpha,

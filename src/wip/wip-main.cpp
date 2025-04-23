@@ -26,18 +26,28 @@ void init(engine::ServiceRegistry& locator) {
   const world::Instance instance{
     locator.get_service<engine::Map>()->create_instance("world").id};
 
+
+  const auto i_am = registry->create();
+  registry->emplace<world::Instance>(i_am, instance.id);
+  registry->emplace<world::Rectangle>(i_am, 1, 1);
+  registry->emplace<world::Position>(i_am);
+  registry->emplace<graphics::Color>(i_am, 1,0,0);
+  registry->emplace<other::InputWASDPositionController>(
+    i_am, other::InputWASDPositionController{.speed = 3, .shift_speed = 10});
+  registry->emplace<graphics::Layer>(i_am, 10);
+
   const auto camera = registry->create();
   registry->emplace<world::Instance>(camera, instance.id);
-  registry->emplace<world::Rectangle>(camera, 4.0, 4.0);
+  registry->emplace<world::Rectangle>(camera);
   registry->emplace<world::Position>(camera);
   registry->emplace<graphics::Invisible>(camera);
-  registry->emplace<other::InputWASDPositionController>(
-    camera, other::InputWASDPositionController{.speed = 3, .shift_speed = 10});
   registry->emplace<other::InputQEScaleController>(camera);
   registry->emplace<graphics::Camera>(camera);
   registry->emplace<graphics::CameraLinkWithMainWindow>(
     camera, graphics::CameraLinkWithMainWindow{.preferred_height = 14});
   registry->emplace<world::Scale>(camera);
+  registry->emplace<world::CopyPositionFrom>(camera, i_am);
+
 
   for (int x = -20; x <= 20; x += 2) {
     for (int y = -20; y <= 20; y += 2) {

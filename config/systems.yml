@@ -1,6 +1,8 @@
 groups:
   engine-update:
     - InputWASDPositionController
+    - InputQEScaleController
+    - CopyPositionFrom
     - SyncCameraWithMainWindow
     - UpdateBBox
     - UpdateMap
@@ -10,8 +12,6 @@ groups:
   engine-draw-end:
     - RenderSokolEnd
 order:
-  - UpdatePosition
-  - InputQEScaleController
   - group.engine-update
   - group.engine-draw-begin
   - group.engine-draw-end

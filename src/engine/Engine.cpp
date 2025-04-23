@@ -9,6 +9,7 @@
 #include "systems/UpdateBBox.hpp"
 #include "systems/UpdateMap.hpp"
 #include "systems/InputQEScaleController.hpp"
+#include "systems/simple_systems.hpp"
 
 namespace engine {
 
@@ -64,6 +65,9 @@ namespace engine {
         std::bind_back(systems::InputQEScaleController,
                        this->service_registry->get_service<Input>()));
     }
+
+    systems::add_simple_systems(*system_scheduler);
+
   }
 
   void Engine::run() {

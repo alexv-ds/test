@@ -31,4 +31,8 @@ namespace engine::components::world {
     float height = 0;
   };
 
+  struct CopyPositionFrom {
+    entt::entity target = entt::null;
+  };
+
 } // namespace engine::components::world

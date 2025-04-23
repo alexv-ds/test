@@ -43,6 +43,8 @@ add_library(engine
   systems/SyncCameraWithMainWindow.hpp
   systems/InputQEScaleController.cpp
   systems/InputQEScaleController.hpp
+  systems/simple_systems.cpp
+  systems/simple_systems.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
