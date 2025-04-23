@@ -41,6 +41,8 @@ add_library(engine
   systems/InputWASDPositionController.hpp
   systems/SyncCameraWithMainWindow.cpp
   systems/SyncCameraWithMainWindow.hpp
+  systems/InputQEScaleController.cpp
+  systems/InputQEScaleController.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

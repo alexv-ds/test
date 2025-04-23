@@ -8,6 +8,7 @@
 #include "systems/SyncCameraWithMainWindow.hpp"
 #include "systems/UpdateBBox.hpp"
 #include "systems/UpdateMap.hpp"
+#include "systems/InputQEScaleController.hpp"
 
 namespace engine {
 
@@ -57,6 +58,11 @@ namespace engine {
 
       system_scheduler->add_system("SyncCameraWithMainWindow",
                                    std::make_shared<systems::SyncCameraWithMainWindow>());
+
+      system_scheduler->add_system(
+        "InputQEScaleController",
+        std::bind_back(systems::InputQEScaleController,
+                       this->service_registry->get_service<Input>()));
     }
   }
 
