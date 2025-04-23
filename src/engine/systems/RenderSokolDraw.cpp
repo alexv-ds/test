@@ -125,7 +125,7 @@ namespace engine::systems {
       }
 
       std::sort(draw_objects.begin(), draw_objects.end(),
-                [](const auto& a, const auto& b) { return a.layer.z > b.layer.z; });
+                [](const auto& a, const auto& b) { return a.layer.z < b.layer.z; });
 
       sgp_project(-camera_width * 0.5f + camera_position.x,
                   camera_width * 0.5f + camera_position.x,
