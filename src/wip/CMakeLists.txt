@@ -9,9 +9,11 @@ target_link_libraries(wip PRIVATE
 
 
 if(EMSCRIPTEN)
-  target_link_options(wip PUBLIC
+  target_link_options(wip PRIVATE
     -sNO_DISABLE_EXCEPTION_CATCHING
     -sALLOW_MEMORY_GROWTH
     "SHELL: --embed-file ${PROJECT_SOURCE_DIR}/config/@/config"
   )
 endif()
+
+#target_link_libraries(wip PRIVATE third_party::soloud)

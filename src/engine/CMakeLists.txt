@@ -45,6 +45,7 @@ add_library(engine
   systems/InputQEScaleController.hpp
   systems/simple_systems.cpp
   systems/simple_systems.hpp
+  helpers/TimeMeter.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

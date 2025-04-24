@@ -14,5 +14,6 @@ groups:
 order:
   - group.engine-update
   - group.engine-draw-begin
+  - ImguiTest
   - group.engine-draw-end
 
