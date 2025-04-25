@@ -28,7 +28,7 @@ jobs:
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
-          key: ccache-${{ github.job }}-${{ matrix.os }}
+          key: ${{ github.job }}-${{ matrix.os }}
       - uses: mymindstorm/setup-emsdk@v14
         with:
           version: ${{env.EM_VERSION}}

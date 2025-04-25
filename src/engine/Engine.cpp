@@ -1,6 +1,10 @@
 #include "Engine.hpp"
 #include "MapImpl.hpp"
+#include "ModuleLoader.hpp"
+#include "ModuleRegistry.hpp"
+#include "ModuleRegistryImpl.hpp"
 #include "SokolStatus.hpp"
+#include "systems/InputQEScaleController.hpp"
 #include "systems/InputWASDPositionController.hpp"
 #include "systems/RenderSokolBegin.hpp"
 #include "systems/RenderSokolDraw.hpp"
@@ -8,14 +12,15 @@
 #include "systems/SyncCameraWithMainWindow.hpp"
 #include "systems/UpdateBBox.hpp"
 #include "systems/UpdateMap.hpp"
-#include "systems/InputQEScaleController.hpp"
 #include "systems/simple_systems.hpp"
+
+#include "modules/sound/define.hpp"
 
 namespace engine {
 
   Engine::Engine() {
     this->ecs_registry = std::make_shared<entt::registry>();
-    this->service_registry = std::make_unique<ServiceRegistry>();
+    this->service_registry = std::make_shared<ServiceRegistry>();
     this->engine_lifecycle = std::make_shared<EngineLifecycle>();
     this->system_scheduler =
       std::make_shared<SystemScheduler>("config/systems.yml", this->ecs_registry);
@@ -68,6 +73,12 @@ namespace engine {
 
     systems::add_simple_systems(*system_scheduler);
 
+    const auto module_registry =
+      std::make_shared<ModuleRegistryImpl>(this->service_registry);
+    this->service_registry->add_service<ModuleLoader>(module_registry);
+    this->service_registry->add_service<ModuleRegistry>(module_registry);
+
+    module_registry->define(sound::module_define);
   }
 
   void Engine::run() {

@@ -12,6 +12,8 @@
 // #include <soloud.h>
 // #include <soloud_wav.h>
 #include "engine/Input.hpp"
+#include "engine/ModuleLoader.hpp"
+#include <engine/modules/sound/define.hpp>
 
 
 void init(engine::ServiceRegistry& locator);
@@ -26,6 +28,9 @@ using namespace engine::components;
 void ImguiTest(entt::registry&);
 
 void init(engine::ServiceRegistry& locator) {
+  const auto module_loader = locator.get_service<engine::ModuleLoader>();
+  module_loader->load(engine::sound::module_name);
+
   const std::shared_ptr scheduler = locator.get_service<engine::SystemScheduler>();
   const std::shared_ptr registry = locator.get_service<entt::registry>();
   const world::Instance instance{
@@ -65,6 +70,7 @@ void init(engine::ServiceRegistry& locator) {
 
   // scheduler->add_system("ImguiTest", ImguiTest);
 }
+
 
 /*
 void ImguiTest(entt::registry&) {
