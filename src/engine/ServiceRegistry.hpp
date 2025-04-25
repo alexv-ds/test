@@ -54,7 +54,8 @@ namespace engine
 #ifdef __cpp_lib_is_virtual_base_of
     static_assert(std::is_virtual_base_of_v<Interface, Impl>, "Interface is not virtual base of implementation");
 #endif
-    std::shared_ptr<void> void_service = std::reinterpret_pointer_cast<void>(service);
+    std::shared_ptr<void> void_service =
+      std::reinterpret_pointer_cast<void>(std::static_pointer_cast<Interface>(service));
     add_service(entt::type_id<Interface>(), std::move(void_service));
   }
 
