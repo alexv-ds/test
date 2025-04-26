@@ -1,9 +1,9 @@
 #pragma once
 #include <engine/ModuleDefine.hpp>
 
-namespace engine::sound {
+namespace engine::resource {
 
-  extern const std::string module_name;
+  constexpr auto module_name = "engine::resource";
 
   extern const ModuleDefine module_define;
 

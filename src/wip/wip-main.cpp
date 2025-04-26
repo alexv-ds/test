@@ -11,9 +11,9 @@
 #include <sokol_app.h>
 // #include <soloud.h>
 // #include <soloud_wav.h>
+#include <engine/modules/sound.hpp>
 #include "engine/Input.hpp"
 #include "engine/ModuleLoader.hpp"
-#include <engine/modules/sound/define.hpp>
 
 
 void init(engine::ServiceRegistry& locator);

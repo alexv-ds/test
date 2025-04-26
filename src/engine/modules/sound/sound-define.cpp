@@ -1,14 +1,12 @@
-#include "define.hpp"
+#include <engine/modules/resource.hpp>
+#include <engine/modules/sound.hpp>
 
 namespace engine::sound {
 
-  const std::string module_name = "engine::sound";
-
   const ModuleDefine module_define = ModuleDefineStandalone{
     .name = module_name,
-    .require = {},
+    .require = {resource::module_name},
     .optional = {}
   };
-
 
 }

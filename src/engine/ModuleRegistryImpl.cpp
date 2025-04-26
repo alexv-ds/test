@@ -5,7 +5,18 @@
 namespace engine {
 
   void ModuleRegistryImpl::load(const std::string& name) {
-    if (!this->recursive_load(name)) {
+    bool loaded;
+    this->load_in_progress = true;
+    try {
+      loaded = this->recursive_load(name);
+      this->load_in_progress = false;
+    }
+    catch (...) {
+      this->load_in_progress = false;
+      std::rethrow_exception(std::current_exception());
+    }
+
+    if (!loaded) {
       throw std::runtime_error(std::format("failed to load module '{}'", name));
     }
   }
@@ -28,32 +39,26 @@ namespace engine {
       throw std::logic_error(std::format("max depth {} reached", max_depth));
     }
 
-    this->load_in_progress = true;
-    try {
-      const auto define = this->defines.find(name);
-      if (define == this->defines.end()) {
+    LOG_TRACE("loading module '{}'", name);
+
+    const auto define = this->defines.find(name);
+    if (define == this->defines.end()) {
+      return false;
+    }
+    for (const auto& opt : define->second.optional) {
+      recursive_load(opt, depth + 1);
+    }
+    for (const auto& req : define->second.require) {
+      if (!recursive_load(req, depth + 1)) {
         return false;
       }
-      for (const auto& opt : define->second.optional) {
-        recursive_load(opt, depth + 1);
-      }
-      for (const auto& req : define->second.require) {
-        if (!recursive_load(req, depth + 1)) {
-          return false;
-        }
-      }
-      if (define->second.init) {
-        define->second.init(*this->locator);
-      }
-      this->loaded_modules.insert(define->second.name);
-      LOG_INFO("module '{}' loaded", name);
-      this->load_in_progress = false;
-      return true;
     }
-    catch (...) {
-      this->load_in_progress = false;
-      std::rethrow_exception(std::current_exception());
+    if (define->second.init) {
+      define->second.init(*this->locator);
     }
+    this->loaded_modules.insert(define->second.name);
+    LOG_INFO("module loaded - '{}'", name);
+    return true;
   }
 
 } // namespace engine

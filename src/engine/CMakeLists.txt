@@ -48,12 +48,15 @@ add_library(engine
   helpers/TimeMeter.hpp
   ModuleDefine.hpp
   modules/sound/components.hpp
-  modules/sound/define.hpp
-  modules/sound/define.cpp
+  modules/sound.hpp
+  modules/sound/sound-define.cpp
   ModuleRegistry.hpp
   ModuleLoader.hpp
   ModuleRegistryImpl.cpp
   ModuleRegistryImpl.hpp
+  modules/resource/components.hpp
+  modules/resource/resource-define.cpp
+  modules/resource.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

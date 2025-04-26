@@ -14,7 +14,8 @@
 #include "systems/UpdateMap.hpp"
 #include "systems/simple_systems.hpp"
 
-#include "modules/sound/define.hpp"
+#include "modules/resource.hpp"
+#include "modules/sound.hpp"
 
 namespace engine {
 
@@ -79,6 +80,7 @@ namespace engine {
     this->service_registry->add_service<ModuleRegistry>(module_registry);
 
     module_registry->define(sound::module_define);
+    module_registry->define(resource::module_define);
   }
 
   void Engine::run() {
