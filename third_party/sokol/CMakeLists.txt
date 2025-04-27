@@ -17,14 +17,27 @@ CPMAddPackage(
   DOWNLOAD_ONLY
 )
 
-add_library(sokol-libs STATIC EXCLUDE_FROM_ALL
-  sokol.cpp
+list(APPEND IMGUI_SOURCES
   ${ImGui_SOURCE_DIR}/imgui.cpp
   ${ImGui_SOURCE_DIR}/imgui_demo.cpp
   ${ImGui_SOURCE_DIR}/imgui_draw.cpp
   ${ImGui_SOURCE_DIR}/imgui_tables.cpp
   ${ImGui_SOURCE_DIR}/imgui_widgets.cpp
 )
+
+add_library(sokol-libs STATIC EXCLUDE_FROM_ALL
+  sokol.cpp
+  ${IMGUI_SOURCES}
+
+)
+
+# supress some warnings for imgui sources
+set_source_files_properties(
+  ${IMGUI_SOURCES}
+  PROPERTIES
+  COMPILE_OPTIONS "-Wno-nontrivial-memcall"
+)
+
 target_include_directories(sokol-libs SYSTEM PUBLIC ${ImGui_SOURCE_DIR})
 target_include_directories(sokol-libs SYSTEM PUBLIC ${sokol_SOURCE_DIR} ${sokol-gp_SOURCE_DIR})
 target_compile_definitions(sokol-libs PRIVATE
