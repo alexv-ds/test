@@ -9,7 +9,8 @@ namespace engine
   class EngineLifecycle
   {
   public:
-    using callback = std::function<void(ServiceRegistry &)>;
+    using Callback = std::function<void(ServiceRegistry &)>;
+    using CallbackId = int;
 
     enum class Stage : std::size_t
     {
@@ -23,12 +24,18 @@ namespace engine
       exit_post = 7
     };
 
-    void add_callback_static(Stage stage, callback cb);
+    void add_callback_static(Stage stage, Callback cb);
+    [[nodiscard]] CallbackId add_callback(Stage stage, Callback cb);
+    void remove_callback(CallbackId id);
+
     void emit(ServiceRegistry &registry, Stage stage);
 
   private:
-    std::array<std::vector<callback>, 8> callbacks;
-    std::vector<callback> tmp_current_execute;
+    int callback_counter_ = 0;
+
+    std::array<std::vector<Callback>, 8> callbacks{};
+    std::array<std::map<int,Callback>, 8> dynamic_callbacks{};
+    std::vector<Callback> tmp_current_execute;
   };
 
 }
