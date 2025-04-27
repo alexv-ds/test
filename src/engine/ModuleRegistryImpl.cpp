@@ -39,6 +39,10 @@ namespace engine {
       throw std::logic_error(std::format("max depth {} reached", max_depth));
     }
 
+    if (loaded_modules.contains(name)) {
+      return true;
+    }
+
     LOG_TRACE("loading module '{}'", name);
 
     const auto define = this->defines.find(name);
