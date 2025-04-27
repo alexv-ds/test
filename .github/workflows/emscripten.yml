@@ -78,6 +78,8 @@ jobs:
       - name: Build gh-pages
         run: |
           sed 's|@@APP_URL@@|wip.js?v=${{ github.sha }}|g' gh-pages.template.html > gh-pages/index.html
+      - name: Copy resources
+        run: cp -r resources gh-pages/resources
       - name: Upload gh-pages
         uses: actions/upload-pages-artifact@v3
         with:

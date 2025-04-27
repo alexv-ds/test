@@ -57,6 +57,8 @@ add_library(engine
   modules/resource/components.hpp
   modules/resource/resource-define.cpp
   modules/resource.hpp
+  modules/resource/systems/ResourceLoader.cpp
+  modules/resource/systems/ResourceLoader.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

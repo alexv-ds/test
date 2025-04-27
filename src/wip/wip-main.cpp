@@ -12,6 +12,7 @@
 // #include <soloud.h>
 // #include <soloud_wav.h>
 #include <engine/modules/sound.hpp>
+#include <engine/modules/resource/components.hpp>
 #include "engine/Input.hpp"
 #include "engine/ModuleLoader.hpp"
 
@@ -69,6 +70,7 @@ void init(engine::ServiceRegistry& locator) {
   }
 
   // scheduler->add_system("ImguiTest", ImguiTest);
+
 }
 
 

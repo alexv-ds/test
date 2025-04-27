@@ -1,8 +1,21 @@
-//
-// Created by alexv on 26.04.2025.
-//
+#pragma once
+#include <memory>
+#include <vector>
+#include <string>
+#include <optional>
 
-#ifndef COMPONENTS_HPP
-#define COMPONENTS_HPP
+namespace engine::resource::components {
 
-#endif //COMPONENTS_HPP
+  struct Load {
+    std::string name;
+  };
+
+  struct Resource {
+    std::shared_ptr<std::vector<char>> resource;
+  };
+
+  struct Ready {
+    std::optional<std::string> error;
+  };
+
+}

@@ -1,5 +1,7 @@
 groups:
   engine-update:
+    - engine::resource::ResourceLoader
+
     - InputWASDPositionController
     - InputQEScaleController
     - CopyPositionFrom
