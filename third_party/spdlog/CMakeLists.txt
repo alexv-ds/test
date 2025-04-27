@@ -5,7 +5,7 @@ CPMAddPackage(
   EXCLUDE_FROM_ALL ON
   OPTIONS
   "SPDLOG_USE_STD_FORMAT ON"
-  "SPDLOG_ENABLE_PCH ON"
+  "SPDLOG_ENABLE_PCH OFF"
 )
 
 add_library(third_party::spdlog ALIAS spdlog)
