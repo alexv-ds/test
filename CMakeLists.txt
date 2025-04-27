@@ -10,7 +10,16 @@ set(CMAKE_CXX_STANDARD 23)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_SCAN_FOR_MODULES OFF)
 
-add_compile_options(-fno-rtti -Wall -Wextra -pedantic -Wno-language-extension-token)
+add_compile_options(
+  -Wall
+  -Wextra
+  -pedantic
+
+  -Wno-language-extension-token
+  -Wno-missing-designated-field-initializers
+
+  -fno-rtti
+)
 
 include(cmake/CPM.cmake)
 
