@@ -44,6 +44,7 @@ target_compile_options(soloud_static PRIVATE
   -Wno-newline-eof
   -Wno-unused-value
   -Wno-sign-compare
+  -Wno-missing-field-initializers
 )
 
 if (WIN32)
