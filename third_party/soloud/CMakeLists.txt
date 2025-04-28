@@ -1,9 +1,13 @@
-CPMAddPackage(
-  NAME SoLoud
-  VERSION ref-e82fd32
-  URL "https://github.com/jarikomppa/soloud/archive/e82fd32c1f62183922f08c14c814a02b58db1873.zip"
-  DOWNLOAD_ONLY
-)
+project(Soloud)
+
+#CPMAddPackage(
+#  NAME SoLoud
+#  VERSION ref-e82fd32
+#  URL "https://github.com/jarikomppa/soloud/archive/e82fd32c1f62183922f08c14c814a02b58db1873.zip"
+#  DOWNLOAD_ONLY
+#)
+
+set(SoLoud_SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/soloud)
 
 file(GLOB_RECURSE SOLOUD_SRC
   "${SoLoud_SOURCE_DIR}/src/audiosource/**.c*"
@@ -40,12 +44,13 @@ if (WIN32)
   )
   target_sources(soloud_static PRIVATE ${SOLOUD_BACKENDS_SRC})
 elseif(EMSCRIPTEN)
-  add_compile_definitions(soloud_static PRIVATE WITH_OPENAL)
+  add_compile_definitions(soloud_static PRIVATE WITH_SDL2_STATIC)
   file(GLOB_RECURSE SOLOUD_BACKENDS_SRC
-    "${SoLoud_SOURCE_DIR}/src/backend/openal/**.c*"
+    "${SoLoud_SOURCE_DIR}/src/backend/sdl2_static/**.c*"
   )
   target_sources(soloud_static PRIVATE ${SOLOUD_BACKENDS_SRC})
-  target_link_libraries(soloud_static PUBLIC -lopenal)
+  target_compile_options(soloud_static PUBLIC "-sUSE_SDL=2")
+  target_link_options(soloud_static PUBLIC "-sUSE_SDL=2")
 else()
   # TODO: add linux
   message(FATAL_ERROR "Unsupported os")
