@@ -1,5 +1,3 @@
-project(Soloud)
-
 #CPMAddPackage(
 #  NAME SoLoud
 #  VERSION ref-e82fd32
@@ -29,7 +27,24 @@ add_compile_definitions(soloud_static PRIVATE
   $<$<CONFIG:MinSizeRel>:NDEBUG>
 )
 
-add_compile_options(soloud_static PRIVATE -fno-rtti -fno-exceptions)
+target_compile_options(soloud_static PRIVATE
+  -fno-rtti
+  -fno-exceptions
+  -Wno-reorder-ctor
+  -Wno-unused-parameter
+  -Wno-unused-variable
+  -Wno-misleading-indentation
+  -Wno-missing-braces
+  -Wno-delete-non-abstract-non-virtual-dtor
+  -Wno-strict-prototypes
+  -Wno-unused-but-set-variable
+  -Wno-char-subscripts
+  -Wno-bitwise-op-parentheses
+  -Wno-tautological-compare
+  -Wno-newline-eof
+  -Wno-unused-value
+  -Wno-sign-compare
+)
 
 if (WIN32)
   target_link_libraries(soloud_static PRIVATE ole32 uuid avrt winmm)
@@ -55,3 +70,4 @@ else()
   # TODO: add linux
   message(FATAL_ERROR "Unsupported os")
 endif()
+

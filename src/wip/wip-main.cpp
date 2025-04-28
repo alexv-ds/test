@@ -9,8 +9,8 @@
 #include <imgui.h>
 #include <random>
 #include <sokol_app.h>
-// #include <soloud.h>
-// #include <soloud_wav.h>
+#include <soloud.h>
+#include <soloud_wav.h>
 #include <engine/modules/sound.hpp>
 #include <engine/modules/resource.hpp>
 #include <engine/modules/resource/services/Loader.hpp>
@@ -29,6 +29,8 @@ using namespace engine::components;
 
 
 void ImguiTest(entt::registry&);
+
+std::vector<std::uint8_t> g_sound;
 
 void init(engine::ServiceRegistry& locator) {
   const auto module_loader = locator.get_service<engine::ModuleLoader>();
@@ -72,16 +74,17 @@ void init(engine::ServiceRegistry& locator) {
   }
 
   module_loader->load(engine::resource::module_name);
-
-  static auto res =
-    locator.get_service<engine::resource::Loader>()->load("resources/test-10mb.mp3");
-
-  // scheduler->add_system("ImguiTest", ImguiTest);
-
+  static auto _ = locator.get_service<engine::resource::Loader>()->load("resources/do-not-play-me.mp3", [scheduler](auto& res) {
+    const auto result = res.data();
+    if (!result) {
+      return;
+    }
+    std::copy(result->begin(), result->end(), std::back_inserter(g_sound));
+    scheduler->add_system("ImguiTest", ImguiTest);
+  });
 }
 
 
-/*
 void ImguiTest(entt::registry&) {
   static auto soloud = [] {
     // No leak, we place it into unique_ptr
@@ -101,9 +104,9 @@ void ImguiTest(entt::registry&) {
 
   ImGui::Begin("Hello world");
   ImGui::Text("Hello, world %d", 123);
-  if (ImGui::Button("BOOOP")) {
+  if (ImGui::Button("AMOGUS")) {
     auto* sample = new(SoLoud::Wav);
-    if (const auto err = sample->load("resources/sad-violin.mp3"); err) {
+    if (const auto err = sample->loadMem(g_sound.data(), g_sound.size(), false, false); err) {
       LOG_ERROR("cannot load mp3: {}", soloud->getErrorString(err));
       std::exit(EXIT_FAILURE);
     }
@@ -114,4 +117,3 @@ void ImguiTest(entt::registry&) {
 
   ImGui::End();
 }
-*/
