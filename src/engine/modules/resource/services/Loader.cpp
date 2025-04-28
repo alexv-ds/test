@@ -12,6 +12,7 @@ namespace engine::resource {
   // //////////////////////////// //
 
   Resource::Resource(std::string&& file) : file_(std::move(file)) {
+    LOG_TRACE("Resource '{}' - loading started", this->file_);
     this->data_.resize(chunk_size);
     const void* user_data = this;
     const sfetch_request_t req{

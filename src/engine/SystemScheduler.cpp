@@ -167,7 +167,7 @@ namespace engine {
           report << std::endl;
         }
       }
-      LOG_TRACE(report.str());
+      LOG_DEBUG(report.str());
     }
 
     // waring report
