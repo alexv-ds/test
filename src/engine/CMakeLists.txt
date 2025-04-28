@@ -54,13 +54,12 @@ add_library(engine
   ModuleLoader.hpp
   ModuleRegistryImpl.cpp
   ModuleRegistryImpl.hpp
-  modules/resource/components.hpp
   modules/resource/resource-define.cpp
   modules/resource.hpp
-  modules/resource/systems/ResourceLoader.cpp
-  modules/resource/systems/ResourceLoader.hpp
   helpers/sokol_log.cpp
   helpers/sokol_log.hpp
+  modules/resource/services/Loader.cpp
+  modules/resource/services/Loader.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

@@ -2,7 +2,7 @@
 #include <engine/SystemScheduler.hpp>
 #include <engine/log.hpp>
 #include "../resource.hpp"
-#include "systems/ResourceLoader.hpp"
+#include "services/Loader.hpp"
 
 namespace engine::resource {
 
@@ -22,8 +22,11 @@ namespace engine::resource {
 
     const auto scheduler = locator.get_service<SystemScheduler>();
 
-    scheduler->add_system(std::format("{}::ResourceLoader", module_name),
-                          std::make_shared<systems::ResourceLoader>());
+    // scheduler->add_system(std::format("{}::ResourceLoader", module_name),
+    //                       std::make_shared<systems::ResourceLoader>());
+
+
+    locator.add_service(std::make_shared<Loader>(locator.get_service<EngineLifecycle>()));
   }
 
 

@@ -12,7 +12,8 @@
 // #include <soloud.h>
 // #include <soloud_wav.h>
 #include <engine/modules/sound.hpp>
-#include <engine/modules/resource/components.hpp>
+#include <engine/modules/resource.hpp>
+#include <engine/modules/resource/services/Loader.hpp>
 #include "engine/Input.hpp"
 #include "engine/ModuleLoader.hpp"
 
@@ -25,6 +26,7 @@ void engine_main(engine::ServiceRegistry& reg) {
 }
 
 using namespace engine::components;
+
 
 void ImguiTest(entt::registry&);
 
@@ -68,6 +70,11 @@ void init(engine::ServiceRegistry& locator) {
       registry->emplace<world::Position>(e, x, y);
     }
   }
+
+  module_loader->load(engine::resource::module_name);
+
+  static auto res =
+    locator.get_service<engine::resource::Loader>()->load("resources/test-10mb.mp3");
 
   // scheduler->add_system("ImguiTest", ImguiTest);
 

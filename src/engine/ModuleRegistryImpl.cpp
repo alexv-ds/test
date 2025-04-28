@@ -61,7 +61,7 @@ namespace engine {
       define->second.init(*this->locator);
     }
     this->loaded_modules.insert(define->second.name);
-    LOG_INFO("module loaded - '{}'", name);
+    LOG_INFO("Module loaded - '{}'", name);
     return true;
   }
 
