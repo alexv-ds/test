@@ -38,15 +38,18 @@ jobs:
         with:
           cmake-version: '3.31.2'
       - name: Configure project
+        # Temporarily turn off -flto due to program crash when trying to play sound.
+        # CMAKE_EXE_LINKER_FLAGS
+        # CMAKE_C_FLAGS
+        # CMAKE_CXX_FLAGS
+        # TODO: troubleshoot it
         run: |
           cmake -Bbuild -G Ninja \
             -DCMAKE_TOOLCHAIN_FILE="${{env.EM_CACHE_FOLDER}}/emsdk-main/upstream/emscripten/cmake/Modules/Platform/Emscripten.cmake" \
             -DCMAKE_BUILD_TYPE=Release \
             -DCMAKE_C_COMPILER_LAUNCHER=ccache \
             -DCMAKE_CXX_COMPILER_LAUNCHER=ccache \
-            -DCMAKE_EXE_LINKER_FLAGS="-flto -sSINGLE_FILE" \
-            -DCMAKE_C_FLAGS="-flto" \
-            -DCMAKE_CXX_FLAGS="-flto" \
+            -DCMAKE_EXE_LINKER_FLAGS="-sSINGLE_FILE" \
             -DCMAKE_C_FLAGS_RELEASE="-O3" \
             -DCMAKE_CXX_FLAGS_RELEASE="-O3"
       - name: Build
