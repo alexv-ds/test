@@ -11,12 +11,13 @@ namespace engine::resource {
   class Resource : noncopyable {
   public:
     using DataType = std::expected<std::span<const std::uint8_t>, std::string>;
+    using Callback = std::function<void(const Resource&)>;
 
     ~Resource();
 
     [[nodiscard]] bool finished() const noexcept { return this->finished_; }
     void cancel();
-    DataType data() noexcept;
+    DataType data() const noexcept;
 
   private:
     friend class Loader;
@@ -29,10 +30,13 @@ namespace engine::resource {
     sfetch_handle_t fetch_handle_{.id = 0};
     bool finished_ = false;
     std::string error;
-
     helpers::TimeMeter timer_;
+    Callback cb_;
 
-    explicit Resource(std::string&& file);
+
+    explicit Resource(std::string&& file, Callback&& cb);
+
+    void execute_callback() const noexcept;
   };
 
   class Loader {
@@ -40,7 +44,9 @@ namespace engine::resource {
     explicit Loader(std::shared_ptr<EngineLifecycle> engine_lifecycle);
     ~Loader();
 
-    Resource load(std::string&& file) { return Resource{std::move(file)}; }
+    Resource load(std::string&& file, Resource::Callback cb = nullptr) {
+      return Resource{std::move(file), std::move(cb)};
+    }
 
   private:
     EngineLifecycle::CallbackId cb_id_;

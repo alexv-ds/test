@@ -11,7 +11,8 @@ namespace engine::resource {
   // ///////// Resource ///////// //
   // //////////////////////////// //
 
-  Resource::Resource(std::string&& file) : file_(std::move(file)) {
+  Resource::Resource(std::string&& file, Callback&& cb) :
+      file_(std::move(file)), cb_(std::move(cb)) {
     LOG_TRACE("Resource '{}' - loading started", this->file_);
     this->data_.resize(chunk_size);
     const void* user_data = this;
@@ -30,12 +31,37 @@ namespace engine::resource {
     this->fetch_handle_ = sfetch_send(req);
   }
 
+  void Resource::execute_callback() const noexcept {
+    if (this->cb_) {
+      try {
+        this->cb_(*this);
+      }
+      catch (const std::exception& e) {
+        LOG_ERROR("Resouce callback execution error: {}", e.what());
+      }
+    }
+  }
+
   Resource::~Resource() {
     if (sfetch_handle_valid(this->fetch_handle_)) {
       LOG_DEBUG("Resource fetch canceled - {}", this->file_);
       sfetch_cancel(this->fetch_handle_);
     }
   }
+
+  void Resource::cancel() {
+    if (sfetch_handle_valid(this->fetch_handle_)) {
+      sfetch_cancel(this->fetch_handle_);
+    }
+  }
+
+  Resource::DataType Resource::data() const noexcept {
+    if (!this->error.empty()) {
+      return std::unexpected(this->error);
+    }
+    return this->data_;
+  }
+
   void Resource::on_response(const sfetch_response_t* res) {
     if (!this->error.empty()) {
       return;
@@ -62,14 +88,16 @@ namespace engine::resource {
           return "UNKNOWN ERROR";
         }
       }();
-      this->error = std::format(
-        "fetch failed {} (code: {})", errmsg,
-        static_cast<std::underlying_type_t<decltype(res->error_code)>>(res->error_code));
+      this->error = errmsg;
+      LOG_ERROR("Resource '{}' loading error: {}", this->file_, this->error);
+      this->execute_callback();
       return;
     }
     if (res->cancelled) {
       this->data_.clear();
       this->error = "CANCELLED";
+      LOG_TRACE("Resource loading canceled '{}'", this->file_);
+      this->execute_callback();
       return;
     }
     if (res->paused) {
@@ -79,15 +107,14 @@ namespace engine::resource {
     sfetch_unbind_buffer(res->handle);
     this->data_.resize(this->data_.size() - (chunk_size - res->data.size) +
                        (res->finished ? 0 : chunk_size));
-    sfetch_bind_buffer(res->handle, {
-      .ptr = &this->data_.back() - chunk_size,
-      .size = chunk_size
-    });
+    sfetch_bind_buffer(res->handle,
+                       {.ptr = &this->data_.back() - chunk_size, .size = chunk_size});
 
     if (res->finished) {
       this->finished_ = true;
       LOG_INFO("Resource loaded '{}' - {:.2f}s", this->file_,
-                this->timer_.measure<std::chrono::duration<float>>().count());
+               this->timer_.measure<std::chrono::duration<float>>().count());
+      this->execute_callback();
     }
   }
 
