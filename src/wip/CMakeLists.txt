@@ -16,4 +16,4 @@ if(EMSCRIPTEN)
   )
 endif()
 
-target_link_libraries(wip PRIVATE third_party::soloud)
+#target_link_libraries(wip PRIVATE third_party::soloud)

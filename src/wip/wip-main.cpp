@@ -4,17 +4,9 @@
 #include <engine/components/graphics.hpp>
 #include <engine/components/other.hpp>
 #include <engine/components/world.hpp>
-#include <engine/hsv_rgb_conversion.hpp>
 #include <engine/log.hpp>
-#include <imgui.h>
-#include <random>
 #include <sokol_app.h>
-#include <soloud.h>
-#include <soloud_wav.h>
-#include <engine/modules/sound.hpp>
-#include <engine/modules/resource.hpp>
 #include <engine/modules/resource/services/Loader.hpp>
-#include "engine/Input.hpp"
 #include "engine/ModuleLoader.hpp"
 
 
@@ -34,7 +26,6 @@ std::vector<std::uint8_t> g_sound;
 
 void init(engine::ServiceRegistry& locator) {
   const auto module_loader = locator.get_service<engine::ModuleLoader>();
-  module_loader->load(engine::sound::module_name);
 
   const std::shared_ptr scheduler = locator.get_service<engine::SystemScheduler>();
   const std::shared_ptr registry = locator.get_service<entt::registry>();
@@ -73,47 +64,6 @@ void init(engine::ServiceRegistry& locator) {
     }
   }
 
-  module_loader->load(engine::resource::module_name);
-  static auto _ = locator.get_service<engine::resource::Loader>()->load("resources/do-not-play-me.mp3", [scheduler](auto& res) {
-    const auto result = res.data();
-    if (!result) {
-      return;
-    }
-    std::copy(result->begin(), result->end(), std::back_inserter(g_sound));
-    scheduler->add_system("ImguiTest", ImguiTest);
-  });
 }
 
 
-void ImguiTest(entt::registry&) {
-  static auto soloud = [] {
-    // No leak, we place it into unique_ptr
-    // ReSharper disable once CppDFAMemoryLeak
-    auto* engine = new SoLoud::Soloud();
-    if (const auto err = engine->init(); err) {
-      LOG_CRITICAL("Cannot init soloud: {}", engine->getErrorString(err));
-      std::exit(EXIT_FAILURE);
-    }
-    std::unique_ptr<SoLoud::Soloud, void (*)(SoLoud::Soloud*)> unique_engine{
-      engine, [](SoLoud::Soloud* raw_engine) {
-        raw_engine->deinit();
-        delete raw_engine;
-      }};
-    return unique_engine;
-  }();
-
-  ImGui::Begin("Hello world");
-  ImGui::Text("Hello, world %d", 123);
-  if (ImGui::Button("AMOGUS")) {
-    auto* sample = new(SoLoud::Wav);
-    if (const auto err = sample->loadMem(g_sound.data(), g_sound.size(), false, false); err) {
-      LOG_ERROR("cannot load mp3: {}", soloud->getErrorString(err));
-      std::exit(EXIT_FAILURE);
-    }
-    auto handle = soloud->play(*sample);
-  }
-  // ImGui::InputText("string", buf, IM_ARRAYSIZE(buf));
-  // ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-
-  ImGui::End();
-}

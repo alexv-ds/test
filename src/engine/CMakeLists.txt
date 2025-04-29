@@ -47,9 +47,6 @@ add_library(engine
   systems/simple_systems.hpp
   helpers/TimeMeter.hpp
   ModuleDefine.hpp
-  modules/sound/components.hpp
-  modules/sound.hpp
-  modules/sound/sound-define.cpp
   ModuleRegistry.hpp
   ModuleLoader.hpp
   ModuleRegistryImpl.cpp
