@@ -57,6 +57,8 @@ add_library(engine
   helpers/sokol_log.hpp
   modules/resource/services/Loader.cpp
   modules/resource/services/Loader.hpp
+  modules/graphics.hpp
+  modules/graphics/graphics-define.cpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")

@@ -14,6 +14,7 @@
 #include "systems/UpdateMap.hpp"
 #include "systems/simple_systems.hpp"
 
+#include "modules/graphics.hpp"
 #include "modules/resource.hpp"
 
 namespace engine {
@@ -79,6 +80,7 @@ namespace engine {
     this->service_registry->add_service<ModuleRegistry>(module_registry);
 
     module_registry->define(resource::module_define);
+    module_registry->define(graphics::module_define);
   }
 
   void Engine::run() {

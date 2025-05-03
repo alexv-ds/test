@@ -10,6 +10,13 @@ namespace engine::systems {
     void update() override;
 
   private:
+    void render() const;
+
     std::shared_ptr<Map> map;
+
+    // struct TextureDeleter =
+
+    // using rexture_ptr = std::shared_ptr<
+
   };
 } // namespace engine::systems

@@ -34,4 +34,8 @@ namespace engine::components::graphics {
     Mode mode = alpha;
   };
 
+  struct Sprite {
+    std::string icon;
+  };
+
 } // namespace engine::components::graphics

@@ -5,9 +5,10 @@
 #include <engine/components/other.hpp>
 #include <engine/components/world.hpp>
 #include <engine/log.hpp>
-#include <sokol_app.h>
 #include <engine/modules/resource/services/Loader.hpp>
+#include <sokol_app.h>
 #include "engine/ModuleLoader.hpp"
+#include "engine/modules/graphics.hpp"
 
 
 void init(engine::ServiceRegistry& locator);
@@ -26,6 +27,7 @@ std::vector<std::uint8_t> g_sound;
 
 void init(engine::ServiceRegistry& locator) {
   const auto module_loader = locator.get_service<engine::ModuleLoader>();
+  module_loader->load(engine::graphics::module_name);
 
   const std::shared_ptr scheduler = locator.get_service<engine::SystemScheduler>();
   const std::shared_ptr registry = locator.get_service<entt::registry>();
@@ -41,6 +43,8 @@ void init(engine::ServiceRegistry& locator) {
   registry->emplace<other::InputWASDPositionController>(
     i_am, other::InputWASDPositionController{.speed = 3, .shift_speed = 10});
   registry->emplace<graphics::Layer>(i_am, 10);
+  // registry->emplace<graphics::BlendMode>(i_am, graphics::BlendMode::add);
+  // registry->emplace<graphics::Transparency>(i_am, 0.5);
 
   const auto camera = registry->create();
   registry->emplace<world::Instance>(camera, instance.id);
@@ -61,6 +65,8 @@ void init(engine::ServiceRegistry& locator) {
       registry->emplace<world::Instance>(e, instance.id);
       registry->emplace<world::Rectangle>(e, 1, 1);
       registry->emplace<world::Position>(e, x, y);
+      registry->emplace<graphics::Sprite>(e, "resources/floor.png");
+      // registry->emplace<graphics::Color>(e, 0,1,0);
     }
   }
 

@@ -1,5 +1,4 @@
 #include "RenderSokolDraw.hpp"
-#include <array>
 #include <optional>
 #include <sokol_gfx.h>
 #include <sokol_gp.h>
@@ -24,9 +23,16 @@ namespace engine::systems {
     std::optional<graphics::BlendMode> blend;
   };
 
-  // TODO: VERY VERY VERY SIMPLE AND STUPID - REWRITE ME
+
   void RenderSokolDraw::update() {
-    // return;
+    this->render();
+  }
+
+  // TODO: VERY VERY VERY SIMPLE AND STUPID - REWRITE ME
+  void RenderSokolDraw::render() const {
+    constexpr int texture_channel = 0;
+    sgp_reset_image(texture_channel);
+
     entt::registry& reg = registry();
     float camera_width{};
     float camera_height{};
@@ -149,7 +155,8 @@ namespace engine::systems {
       for (const auto& obj : draw_objects) {
         if (obj.blend) {
           sgp_set_blend_mode(engine_to_sokol_blend(obj.blend->mode));
-        } else {
+        }
+        else {
           sgp_set_blend_mode(SGP_BLENDMODE_NONE);
         }
         sgp_set_color(obj.color.r, obj.color.g, obj.color.b, obj.transparency.a);
@@ -159,7 +166,25 @@ namespace engine::systems {
         sgp_scale(obj.scale.x, obj.scale.y);
         sgp_rotate_at(obj.rotation.theta, obj.rectangle.width * 0.5f,
                       obj.rectangle.height * 0.5f);
-        sgp_draw_filled_rect(0.f, 0.f, obj.rectangle.width, obj.rectangle.height);
+
+        // sgp_set_image()
+        {
+          const sgp_rect dest{
+            .x = 0.f,
+            .y = 0.f,
+            .w = obj.rectangle.width,
+            .h = obj.rectangle.height,
+          };
+          const sgp_rect src{
+            .x = 0.f,
+            .y = 0.f,
+            .w = 1.f,
+            .h = 1.f,
+          };
+          sgp_draw_textured_rect(texture_channel, dest, src);
+          sgp_reset_image(texture_channel);
+        }
+        // sgp_draw_filled_rect(0.f, 0.f, obj.rectangle.width, obj.rectangle.height);
         sgp_pop_transform();
         sgp_reset_color();
         sgp_reset_blend_mode();
@@ -167,4 +192,5 @@ namespace engine::systems {
       sgp_reset_project();
     }
   }
+
 } // namespace engine::systems
