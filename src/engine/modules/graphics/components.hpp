@@ -1,6 +1,6 @@
 #pragma once
 
-namespace engine::components::graphics {
+namespace engine::graphics::components {
 
   struct Color {
     float r = 0;

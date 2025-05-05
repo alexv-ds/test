@@ -6,10 +6,6 @@
 #include "SokolStatus.hpp"
 #include "systems/InputQEScaleController.hpp"
 #include "systems/InputWASDPositionController.hpp"
-#include "systems/RenderSokolBegin.hpp"
-#include "systems/RenderSokolDraw.hpp"
-#include "systems/RenderSokolEnd.hpp"
-#include "systems/SyncCameraWithMainWindow.hpp"
 #include "systems/UpdateBBox.hpp"
 #include "systems/UpdateMap.hpp"
 #include "systems/simple_systems.hpp"
@@ -42,29 +38,11 @@ namespace engine {
     }
 
     const auto sokol_status = service_registry->get_service<SokolStatus>();
-    {
-
-      if (!sokol_status->is_gfx_initialized() ||
-          !sokol_status->is_util_imgui_initialized() ||
-          !sokol_status->is_sokol_initialized() || !sokol_status->is_spg_initialized()) {
-        throw std::runtime_error("sokol is not fully initialized");
-      }
-      sokol_status->set_imgui_events_interception(true);
-      system_scheduler->add_system("RenderSokolBegin",
-                                   std::make_shared<systems::RenderSokolBegin>());
-      system_scheduler->add_system("RenderSokolDraw",
-                                   std::make_shared<systems::RenderSokolDraw>(map));
-      system_scheduler->add_system("RenderSokolEnd",
-                                   std::make_shared<systems::RenderSokolEnd>());
-    }
-
     if (sokol_status->is_sokol_initialized()) {
       system_scheduler->add_system("InputWASDPositionController",
                                    std::make_shared<systems::InputWASDPositionController>(
                                      this->service_registry->get_service<Input>()));
 
-      system_scheduler->add_system("SyncCameraWithMainWindow",
-                                   std::make_shared<systems::SyncCameraWithMainWindow>());
 
       system_scheduler->add_system(
         "InputQEScaleController",

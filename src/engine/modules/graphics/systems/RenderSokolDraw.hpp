@@ -1,9 +1,9 @@
 #pragma once
 #include <memory>
-#include "../Map.hpp"
-#include "../System.hpp"
+#include <engine/Map.hpp>
+#include <engine/System.hpp>
 
-namespace engine::systems {
+namespace engine::graphics::systems {
   class RenderSokolDraw final : public System {
   public:
     explicit RenderSokolDraw(std::shared_ptr<Map> map) : map(std::move(map)) {}

@@ -4,7 +4,7 @@
 #include <sokol_gp.h>
 #include <util/sokol_imgui.h>
 
-namespace engine::systems {
+namespace engine::graphics::systems {
 
   void RenderSokolBegin::update() {
     const int width = sapp_width();
@@ -21,4 +21,4 @@ namespace engine::systems {
     simgui_new_frame(&simgui_frame_desc);
   }
 
-} // namespace engine::systems
+} // namespace engine::graphics::systems

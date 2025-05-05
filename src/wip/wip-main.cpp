@@ -1,15 +1,15 @@
+
 #include <chrono>
 #include <engine/Engine.hpp>
 #include <engine/Map.hpp>
-#include <engine/components/graphics.hpp>
 #include <engine/components/other.hpp>
 #include <engine/components/world.hpp>
 #include <engine/log.hpp>
 #include <engine/modules/resource/services/Loader.hpp>
 #include <sokol_app.h>
-#include "engine/ModuleLoader.hpp"
-#include "engine/modules/graphics.hpp"
-
+#include <engine/ModuleLoader.hpp>
+#include <engine/modules/graphics.hpp>
+#include <engine/modules/graphics/components.hpp>
 
 void init(engine::ServiceRegistry& locator);
 
@@ -19,6 +19,7 @@ void engine_main(engine::ServiceRegistry& reg) {
 }
 
 using namespace engine::components;
+namespace graphics = engine::graphics::components;
 
 
 void ImguiTest(entt::registry&);

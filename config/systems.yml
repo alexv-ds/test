@@ -5,14 +5,14 @@ groups:
     - InputWASDPositionController
     - InputQEScaleController
     - CopyPositionFrom
-    - SyncCameraWithMainWindow
+    - engine::graphics::SyncCameraWithMainWindow
     - UpdateBBox
     - UpdateMap
   engine-draw-begin:
-    - RenderSokolBegin
-    - RenderSokolDraw
+    - engine::graphics::RenderSokolBegin
+    - engine::graphics::RenderSokolDraw
   engine-draw-end:
-    - RenderSokolEnd
+    - engine::graphics::RenderSokolEnd
 order:
   - group.engine-update
   - group.engine-draw-begin

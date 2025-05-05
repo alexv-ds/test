@@ -1,14 +1,14 @@
 #include "RenderSokolDraw.hpp"
+#include <engine/components/world.hpp>
+#include <engine/log.hpp>
+#include <engine/modules/graphics/components.hpp>
 #include <optional>
 #include <sokol_gfx.h>
 #include <sokol_gp.h>
-#include "../components/graphics.hpp"
-#include "../components/world.hpp"
-#include "../log.hpp"
 
-namespace engine::systems {
+namespace engine::graphics::systems {
 
-  using namespace components;
+  using namespace engine::components;
 
   struct DrawObject {
     world::Rectangle rectangle{};
@@ -17,16 +17,14 @@ namespace engine::systems {
       .theta = 0,
     };
     world::Scale scale{.x = 1.0f, .y = 1.0f};
-    graphics::Color color{.r = 1.0f, .g = 1.0f, .b = 1.0f};
-    graphics::Transparency transparency{.a = 1.0f};
-    graphics::Layer layer{.z = 0};
-    std::optional<graphics::BlendMode> blend;
+    components::Color color{.r = 1.0f, .g = 1.0f, .b = 1.0f};
+    components::Transparency transparency{.a = 1.0f};
+    components::Layer layer{.z = 0};
+    std::optional<components::BlendMode> blend;
   };
 
 
-  void RenderSokolDraw::update() {
-    this->render();
-  }
+  void RenderSokolDraw::update() { this->render(); }
 
   // TODO: VERY VERY VERY SIMPLE AND STUPID - REWRITE ME
   void RenderSokolDraw::render() const {
@@ -43,8 +41,8 @@ namespace engine::systems {
     {
       const auto view =
         reg.view<const world::Rectangle, const world::Position, const world::Instance,
-                 const world::BoundingBox, const graphics::CameraLinkWithMainWindow,
-                 const graphics::Camera>();
+                 const world::BoundingBox, const components::CameraLinkWithMainWindow,
+                 const components::Camera>();
 
       bool has_camera = false;
       for (auto [e, rect, pos, instance, bbox, _] : view.each()) {
@@ -93,7 +91,7 @@ namespace engine::systems {
           continue;
         }
 
-        if (reg.all_of<graphics::Invisible>(data.entity)) {
+        if (reg.all_of<components::Invisible>(data.entity)) {
           continue;
         }
 
@@ -111,20 +109,20 @@ namespace engine::systems {
         if (const auto* p_scale = reg.try_get<world::Scale>(data.entity)) {
           draw_object.scale = *p_scale;
         }
-        if (const auto* p_color = reg.try_get<graphics::Color>(data.entity)) {
+        if (const auto* p_color = reg.try_get<components::Color>(data.entity)) {
           draw_object.color = *p_color;
           draw_object.color.r = std::clamp(draw_object.color.r, 0.0f, 1.0f);
           draw_object.color.g = std::clamp(draw_object.color.g, 0.0f, 1.0f);
           draw_object.color.b = std::clamp(draw_object.color.b, 0.0f, 1.0f);
         }
-        if (const auto* p_layer = reg.try_get<graphics::Layer>(data.entity)) {
+        if (const auto* p_layer = reg.try_get<components::Layer>(data.entity)) {
           draw_object.layer = *p_layer;
         }
         if (const auto p_transparency =
-              reg.try_get<graphics::Transparency>(data.entity)) {
+              reg.try_get<components::Transparency>(data.entity)) {
           draw_object.transparency = *p_transparency;
         }
-        if (const auto p_blend_mode = reg.try_get<graphics::BlendMode>(data.entity)) {
+        if (const auto p_blend_mode = reg.try_get<components::BlendMode>(data.entity)) {
           draw_object.blend = *p_blend_mode;
         }
         draw_objects.push_back(draw_object);
@@ -139,13 +137,13 @@ namespace engine::systems {
                   -camera_height * 0.5f + camera_position.y);
 
 
-      constexpr auto engine_to_sokol_blend = [](const graphics::BlendMode::Mode mode) {
+      constexpr auto engine_to_sokol_blend = [](const components::BlendMode::Mode mode) {
         switch (mode) {
-        case graphics::BlendMode::add:
+        case components::BlendMode::add:
           return SGP_BLENDMODE_ADD;
-        case graphics::BlendMode::modulate:
+        case components::BlendMode::modulate:
           return SGP_BLENDMODE_MOD;
-        case graphics::BlendMode::multiply:
+        case components::BlendMode::multiply:
           return SGP_BLENDMODE_MUL;
         default:
           return SGP_BLENDMODE_BLEND;
@@ -193,4 +191,4 @@ namespace engine::systems {
     }
   }
 
-} // namespace engine::systems
+} // namespace engine::graphics::systems

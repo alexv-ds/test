@@ -2,7 +2,7 @@
 #include <cmath>
 #include "../components/world.hpp"
 #include "../log.hpp"
-#include "engine/components/graphics.hpp"
+#include "../modules/graphics/components.hpp"
 
 namespace engine::systems {
   using Rectangle = components::world::Rectangle;

@@ -6,7 +6,7 @@
 
 #include "RenderSokolEnd.hpp"
 
-namespace engine::systems {
+namespace engine::graphics::systems {
   void RenderSokolEnd::update() {
     sg_pass pass = {};
     pass.swapchain = sglue_swapchain();
@@ -22,4 +22,4 @@ namespace engine::systems {
     // Commit Sokol render.
     sg_commit();
   }
-} // namespace engine::systems
+} // namespace engine::graphics::systems

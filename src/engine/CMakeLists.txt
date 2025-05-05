@@ -15,7 +15,7 @@ add_library(engine
   EventEmitter.cpp
   EventEmitter.hpp
   components/world.hpp
-  components/graphics.hpp
+  modules/graphics/components.hpp
   Map.cpp
   Map.hpp
   noncopyable.hpp
@@ -31,16 +31,16 @@ add_library(engine
   systems/UpdateMap.cpp
   systems/UpdateMap.hpp
   components/other.hpp
-  systems/RenderSokolBegin.cpp
-  systems/RenderSokolBegin.hpp
-  systems/RenderSokolEnd.cpp
-  systems/RenderSokolEnd.hpp
-  systems/RenderSokolDraw.cpp
-  systems/RenderSokolDraw.hpp
+  modules/graphics/systems/RenderSokolBegin.cpp
+  modules/graphics/systems/RenderSokolBegin.hpp
+  modules/graphics/systems/RenderSokolEnd.cpp
+  modules/graphics/systems/RenderSokolEnd.hpp
+  modules/graphics/systems/RenderSokolDraw.cpp
+  modules/graphics/systems/RenderSokolDraw.hpp
   systems/InputWASDPositionController.cpp
   systems/InputWASDPositionController.hpp
-  systems/SyncCameraWithMainWindow.cpp
-  systems/SyncCameraWithMainWindow.hpp
+  modules/graphics/systems/SyncCameraWithMainWindow.cpp
+  modules/graphics/systems/SyncCameraWithMainWindow.hpp
   systems/InputQEScaleController.cpp
   systems/InputQEScaleController.hpp
   systems/simple_systems.cpp
