@@ -7,6 +7,7 @@
 #include "systems/RenderSokolDraw.hpp"
 #include "systems/RenderSokolEnd.hpp"
 #include "systems/SyncCameraWithMainWindow.hpp"
+#include "systems/TextureLoader.hpp"
 
 
 namespace engine::graphics {
@@ -41,6 +42,8 @@ namespace engine::graphics {
     scheduler->add_system(
       std::format("{}::SyncCameraWithMainWindow", module_name),
       std::make_shared<systems::SyncCameraWithMainWindow>());
+
+    scheduler->add_system(std::format("{}::TextureLoader", module_name), std::make_shared<systems::TextureLoader>(locator.get_service<resource::Loader>()));
   }
 
 } // namespace engine::graphics

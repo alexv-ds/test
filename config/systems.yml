@@ -1,6 +1,7 @@
 groups:
   engine-update:
     - engine::resource::ResourceLoader
+    - engine::graphics::TextureLoader
 
     - InputWASDPositionController
     - InputQEScaleController

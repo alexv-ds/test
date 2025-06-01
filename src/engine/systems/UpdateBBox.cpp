@@ -21,17 +21,17 @@ namespace engine::systems {
       update_bbox(reg, entity);
     }
 
-    reg.on_construct<Rectangle>().connect<&UpdateBBox::mark_for_update>(*this);
-    reg.on_construct<Scale>().connect<&UpdateBBox::mark_for_update>(*this);
-    reg.on_construct<Rotation>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_construct<Rectangle>().connect<&UpdateBBox::mark_for_update>(this);
+    reg.on_construct<Scale>().connect<&UpdateBBox::mark_for_update>(this);
+    reg.on_construct<Rotation>().connect<&UpdateBBox::mark_for_update>(this);
 
-    reg.on_update<Rectangle>().connect<&UpdateBBox::mark_for_update>(*this);
-    reg.on_update<Scale>().connect<&UpdateBBox::mark_for_update>(*this);
-    reg.on_update<Rotation>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_update<Rectangle>().connect<&UpdateBBox::mark_for_update>(this);
+    reg.on_update<Scale>().connect<&UpdateBBox::mark_for_update>(this);
+    reg.on_update<Rotation>().connect<&UpdateBBox::mark_for_update>(this);
 
-    reg.on_destroy<Rectangle>().connect<&UpdateBBox::mark_for_update>(*this);
-    reg.on_destroy<Scale>().connect<&UpdateBBox::mark_for_update>(*this);
-    reg.on_destroy<Rotation>().connect<&UpdateBBox::mark_for_update>(*this);
+    reg.on_destroy<Rectangle>().connect<&UpdateBBox::mark_for_update>(this);
+    reg.on_destroy<Scale>().connect<&UpdateBBox::mark_for_update>(this);
+    reg.on_destroy<Rotation>().connect<&UpdateBBox::mark_for_update>(this);
   }
 
   void UpdateBBox::stop() {

@@ -59,9 +59,16 @@ add_library(engine
   modules/resource/services/Loader.hpp
   modules/graphics.hpp
   modules/graphics/graphics-define.cpp
+  modules/graphics/components_private.hpp
+  modules/graphics/systems/TextureLoader.cpp
+  modules/graphics/systems/TextureLoader.hpp
 )
 
 target_include_directories(engine PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/..")
 target_link_libraries(engine PUBLIC third_party::entt third_party::spdlog third_party::yaml-cpp)
-target_link_libraries(engine PRIVATE loose_quadtree::loose_quadtree third_party::sokol)
+target_link_libraries(engine PRIVATE
+  loose_quadtree::loose_quadtree
+  third_party::sokol
+  third_party::lodepng
+)
 target_compile_definitions(engine PUBLIC SPDLOG_ACTIVE_LEVEL=SPDLOG_LEVEL_TRACE)

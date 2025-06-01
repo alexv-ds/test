@@ -5,6 +5,7 @@
 #include <optional>
 #include <sokol_gfx.h>
 #include <sokol_gp.h>
+#include "../components_private.hpp"
 
 namespace engine::graphics::systems {
 
@@ -21,6 +22,7 @@ namespace engine::graphics::systems {
     components::Transparency transparency{.a = 1.0f};
     components::Layer layer{.z = 0};
     std::optional<components::BlendMode> blend;
+    detail::components::Texture texture;
   };
 
 
@@ -125,6 +127,9 @@ namespace engine::graphics::systems {
         if (const auto p_blend_mode = reg.try_get<components::BlendMode>(data.entity)) {
           draw_object.blend = *p_blend_mode;
         }
+        if (const auto p_texture = reg.try_get<detail::components::Texture>(data.entity)) {
+          draw_object.texture = *p_texture;
+        }
         draw_objects.push_back(draw_object);
       }
 
@@ -173,16 +178,22 @@ namespace engine::graphics::systems {
             .w = obj.rectangle.width,
             .h = obj.rectangle.height,
           };
-          const sgp_rect src{
-            .x = 0.f,
-            .y = 0.f,
-            .w = 1.f,
-            .h = 1.f,
-          };
-          sgp_draw_textured_rect(texture_channel, dest, src);
+
+          if (obj.texture.texture) {
+            sgp_set_image(texture_channel, *obj.texture.texture);
+            sgp_draw_textured_rect(texture_channel, dest, obj.texture.uv);
+            sgp_reset_image(texture_channel);
+          } else {
+            constexpr sgp_rect uv{
+              .x = 0.f,
+              .y = 0.f,
+              .w = 1.f,
+              .h = 1.f,
+            };
+            sgp_draw_textured_rect(texture_channel, dest, uv);
+          }
           sgp_reset_image(texture_channel);
         }
-        // sgp_draw_filled_rect(0.f, 0.f, obj.rectangle.width, obj.rectangle.height);
         sgp_pop_transform();
         sgp_reset_color();
         sgp_reset_blend_mode();

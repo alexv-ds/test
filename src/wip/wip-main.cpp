@@ -67,6 +67,7 @@ void init(engine::ServiceRegistry& locator) {
       registry->emplace<world::Rectangle>(e, 1, 1);
       registry->emplace<world::Position>(e, x, y);
       registry->emplace<graphics::Sprite>(e, "resources/floor.png");
+
       // registry->emplace<graphics::Color>(e, 0,1,0);
     }
   }
